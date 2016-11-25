@@ -9,6 +9,7 @@ int main(int argc, char** argv) {
 
 	printf("%d\n", buffer.st_uid);
 	printf("%d\n", buffer.st_gid);
+	printf("%o\n", buffer.st_mode & 07777);
 	printf("%d\n", buffer.st_size);
 	printf("%d\n", buffer.st_atime);
 	printf("%d\n", buffer.st_mtime);
