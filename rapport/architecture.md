@@ -15,7 +15,9 @@ elles appellent la fonction `fn`, fonction que nous devrons implémenter. Cette 
 un pointer sur le tableau de char constituant le nom de l'objet et un pointeur sur une structure de type `stat` 
 (c'est ici que nous trouvons les infos sur l'objet).
 Dans `fn` et `nftw` nous trouvons aussi des arguments "flag", qui permettent de changer plusieurs options de parcours 
-ou de connaître le type de l'objet parcouru. Pour plus de détails : [page de manuel ftw.h sur opengroup.org](http://pubs.opengroup.org/onlinepubs/9699919799/)
+ou de connaître le type de l'objet parcouru. Pour plus de détails :
+[page de manuel ftw.h sur opengroup.org](http://pubs.opengroup.org/onlinepubs/9699919799/) et 
+[celle de linux.die.net](https://linux.die.net/man/3/ftw)
 
 ## Filter
 
@@ -24,3 +26,5 @@ ou de connaître le type de l'objet parcouru. Pour plus de détails : [page de m
 ## Logger
 
 ## Wrapper
+
+## Programme en tâche de fond
