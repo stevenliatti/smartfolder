@@ -38,6 +38,10 @@ Il est également possible d’utiliser le contraire d’un argument en utilisan
 Exemple : `-not arg1`
 Le parser vérifie que l’arrangement des conditions et des opérateurs est correcte. Il stockera ces informations dans la structure de donnée qui est la suivante :
 
+Les informations seront stockées sous la forme suivante, avec un type par option (nom de fichier, taille, date de création, modification, etc...) :
+
+![parser](schemas/Argument.png)
+
 [SCHEMA]
 
 ## Moteur de recherche
@@ -59,6 +63,11 @@ ou de connaître le type de l'objet parcouru. Pour plus de détails :
 ### Filter
 Le filtre teste chaque fichier et indique s’il correspond aux critères demandés. Si c’est le cas, il appelle le HashTable qui s’occupera de la suite des opérations. Il utilise la structure de donnée générée par le parser.
 ![filter](schemas/filter.png)
+
+L'information sera représentée sous la forme d'un tableau avec les arguments et les opéerateur. Les arguments seront testés et le tableau sera parcouru afin de savoir si notre fichier passe le filtre en fonction des opérations.
+
+![filter](schemas/filter_test.png)
+
 
 ### HashTable
 La HashTable est une table des fichiers qui correspondent aux critères. Elle est remplie par le filtre. Le linker est appelé uniquement si le fichier n’est pas présent dans cette table. Dans le cas où deux fichiers ont le même nom il n’y a pas de problèmes car ils sont discriminés par leur chemin complet.
