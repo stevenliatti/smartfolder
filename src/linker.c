@@ -1,5 +1,5 @@
 #include "wrapper.h"
 
-void coucou() {
-	
+void linker() {
+
 }

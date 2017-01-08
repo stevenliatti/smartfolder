@@ -14,6 +14,9 @@ searchfolder.o: searchfolder.c
 crawler.o: crawler.c
 	$(CC) $(FLAGS) $< -c
 
+hash_table.o: hash_table.c
+	$(CC) $(FLAGS) $< -c
+
 linker.o: linker.c
 	$(CC) $(FLAGS) $< -c
 
