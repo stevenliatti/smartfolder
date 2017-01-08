@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv) {
 	if (argc > 1) {
-		int result = mkdir(argv[1], atoi(argv[2]));
+		int result = mkdir(argv[1], 0700);
 		if (result == 0) {
 			printf("success\n");
 		}
