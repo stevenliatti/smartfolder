@@ -6,7 +6,7 @@ OBJECTS=$(SRCS:%.c=%.o)
 all: searchfolder
 
 searchfolder: $(OBJECTS)
-	$(CC) $(FLAGS) $^ -o $@
+	$(CC) $(FLAGS) $^ -o $@ -lm
 
 searchfolder.o: searchfolder.c
 	$(CC) $(FLAGS) $< -c

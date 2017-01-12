@@ -12,6 +12,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 #include <assert.h>
 #include <errno.h>
 
