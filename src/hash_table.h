@@ -20,6 +20,6 @@ typedef struct hash_table_st {
 //bool contains(char* string);
 //int hash(char* string, int size_of_table);
 void insert(char* string, hash_table_t* table);
-void delete(char* string, hash_table_t* table);
+//void delete(char* string, hash_table_t* table);
 
 #endif

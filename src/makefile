@@ -17,6 +17,9 @@ crawler.o: crawler.c
 hash_table.o: hash_table.c
 	$(CC) $(FLAGS) $< -c
 
+hash_functions.o: hash_functions.c
+	$(CC) $(FLAGS) $< -c
+
 linker.o: linker.c
 	$(CC) $(FLAGS) $< -c
 
