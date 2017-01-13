@@ -1,5 +1,5 @@
 #include "wrapper.h"
 
-int _symlink(const char *oldpath, const char *newpath) {
+int inline _symlink(const char *oldpath, const char *newpath) {
 	return symlink(oldpath, newpath);
 }
