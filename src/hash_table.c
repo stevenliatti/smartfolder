@@ -14,7 +14,7 @@ hash_table_t* init(int capacity, double load_factor) {
 }
 
 hash_table_t* resize(hash_table_t* hash_table) {
-	printf("::::::::::::::::::: in resize\n");
+	logger(LOG_DEBUG, stderr, "::::::::::::::::::: in resize\n");
 	hash_table_t* new_hash_table = init(2 * hash_table->capacity, hash_table->load_factor);
 	for (int i = 0; i < hash_table->capacity; i++) {
 		if (hash_table->table[i].state != freed) {
@@ -22,7 +22,7 @@ hash_table_t* resize(hash_table_t* hash_table) {
 		}
 	}
 	free_table(hash_table);
-	printf("::::::::::::::::::: resize success\n");
+	logger(LOG_DEBUG, stderr, "::::::::::::::::::: resize success\n");
 	return new_hash_table;
 }
 
@@ -30,12 +30,12 @@ hash_table_t* insert(char* string, hash_table_t* hash_table) {
 	if ((double) hash_table->elements_count / (double) hash_table->capacity > hash_table->load_factor) {
 		hash_table = resize(hash_table);
 	}
-	printf("//////////////////////// in insert, capacity : %d\n", hash_table->capacity);
+	logger(LOG_DEBUG, stderr, "//////////////////////// in insert, capacity : %d\n", hash_table->capacity);
 	int hash = simple_hash(string, hash_table->capacity);
 
 	while(hash_table->table[hash].state != freed) {
 		if (strcmp(hash_table->table[hash].string, string) == 0 && hash_table->table[hash].state == occupied) {
-			printf("NOT insert %s\n", string);
+			logger(LOG_DEBUG, stderr, "NOT insert %s\n", string);
 			return hash_table;
 		}
 		hash = simple_and_double_hash(hash, string, hash_table->capacity);
@@ -44,7 +44,7 @@ hash_table_t* insert(char* string, hash_table_t* hash_table) {
 	strcpy(hash_table->table[hash].string, string);
 	hash_table->table[hash].state = occupied;
 	hash_table->elements_count++;
-	printf("insert %s\n", string);
+	logger(LOG_DEBUG, stderr, "insert %s\n", string);
 	return hash_table;
 }
 

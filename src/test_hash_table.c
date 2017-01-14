@@ -13,16 +13,15 @@ int main () {
 
 	/* walk through other tokens */
 	while(token != NULL) {
-		printf("---------------------------------------------- tentative pour : %s\n", token);
+		logger(LOG_DEBUG, stderr, "---------------------------------------------- tentative pour : %s\n", token);
 		hash_table = insert(token, hash_table);
 		token = strtok(NULL, s);
 	}
 
-	printf("_______________________________----\n");
+	logger(LOG_DEBUG, stderr, "_______________________________ affichage de la hash_table\n");
 
-	for (int i = 0; i < hash_table->capacity; ++i)
-	{
-		printf("%s - %d\n", hash_table->table[i].string, hash_table->table[i].state);
+	for (int i = 0; i < hash_table->capacity; i++) {
+		logger(LOG_DEBUG, stderr, "%s - %d\n", hash_table->table[i].string, hash_table->table[i].state);
 	}
 
 	free_table(hash_table);

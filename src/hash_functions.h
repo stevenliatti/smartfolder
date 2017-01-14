@@ -1,4 +1,5 @@
 #include "wrapper.h"
+#include "logger.h"
 
 #ifndef _HASH_FUNCTIONS_H_
 #define _HASH_FUNCTIONS_H_

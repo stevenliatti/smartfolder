@@ -15,6 +15,7 @@
 #include <math.h>
 #include <assert.h>
 #include <errno.h>
+#include <stdarg.h>
 
 int _symlink(const char *oldpath, const char *newpath);
 
