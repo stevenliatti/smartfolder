@@ -1,14 +1,20 @@
 CC = gcc
 FLAGS = -g -Wall -Wextra -std=gnu99
-SRCS=$(wildcard *.c)
-OBJECTS=$(SRCS:%.c=%.o)
+TESTS = test_hash_table
+EXEC = searchfolder $(TESTS)
 
-all: searchfolder
+# Fabrique tous les executables (tests inclus)
+all: $(EXEC)
 
-searchfolder: $(OBJECTS)
+# Programme principal
+searchfolder: searchfolder.o parser.o crawler.o hash_table.o hash_functions.o linker.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 searchfolder.o: searchfolder.c
+	$(CC) $(FLAGS) $< -c
+
+# Librairies
+parser.o: parser.c
 	$(CC) $(FLAGS) $< -c
 
 crawler.o: crawler.c
@@ -26,7 +32,17 @@ linker.o: linker.c
 wrapper.o: wrapper.c
 	$(CC) $(FLAGS) $< -c
 
+# Tests
+all_test: $(TESTS)
+
+test_hash_table: test_hash_table.o hash_table.o hash_functions.o wrapper.o
+	$(CC) $(FLAGS) $^ -o $@ -lm
+
+test_hash_table.o: test_hash_table.c
+	$(CC) $(FLAGS) $< -c
+
+# Ménage
 clean:
-	rm -rf *.o searchfolder
+	rm -rf *.o $(EXEC)
 
 rebuild: clean all
