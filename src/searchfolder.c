@@ -1,4 +1,5 @@
 #include "wrapper.h"
+#include "logger.h"
 #include "crawler.h"
 #include "parser.h"
 

@@ -1,13 +1,13 @@
 CC = gcc
 FLAGS = -g -Wall -Wextra -std=gnu99
-TESTS = test_hash_table test_logger
+TESTS = test_hash_table test_logger test_crawler
 EXEC = searchfolder $(TESTS)
 
 # Fabrique tous les executables (tests inclus)
 all: $(EXEC)
 
 # Programme principal
-searchfolder: searchfolder.o parser.o crawler.o hash_table.o hash_functions.o linker.o logger.o wrapper.o
+searchfolder: searchfolder.o parser.o crawler.o hash_table.o hash_functions.o filter.o linker.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 searchfolder.o: searchfolder.c
@@ -26,6 +26,9 @@ hash_table.o: hash_table.c
 hash_functions.o: hash_functions.c
 	$(CC) $(FLAGS) $< -c
 
+filter.o: filter.c
+	$(CC) $(FLAGS) $< -c
+
 linker.o: linker.c
 	$(CC) $(FLAGS) $< -c
 
@@ -42,12 +45,18 @@ test_hash_table: test_hash_table.o hash_table.o hash_functions.o logger.o wrappe
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 test_logger: test_logger.o logger.o wrapper.o
-	$(CC) $(FLAGS) $^ -o $@ -lm
+	$(CC) $(FLAGS) $^ -o $@
+
+test_crawler: test_crawler.o crawler.o logger.o wrapper.o
+	$(CC) $(FLAGS) $^ -o $@
 
 test_hash_table.o: test_hash_table.c
 	$(CC) $(FLAGS) $< -c
 
 test_logger.o: test_logger.c
+	$(CC) $(FLAGS) $< -c
+
+test_crawler.o: test_crawler.c
 	$(CC) $(FLAGS) $< -c
 
 # Ménage
