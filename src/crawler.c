@@ -5,7 +5,6 @@ bool is_dir(struct dirent* entry) {
 }
 
 void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_link) {
-	//hash_table_t* paths_traveled = init(CAPACITY, LOAD_FACTOR);
 	bool inserted;
 	DIR* dir = _opendir(path);
 	struct dirent* entry = NULL;
