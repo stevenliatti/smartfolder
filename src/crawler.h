@@ -1,6 +1,7 @@
 #include "wrapper.h"
 #include "logger.h"
 #include "hash_table.h"
+#include "filter.h"
 
 #ifndef _CRAWLER_H_
 #define _CRAWLER_H_

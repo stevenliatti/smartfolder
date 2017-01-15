@@ -47,7 +47,7 @@ test_hash_table: test_hash_table.o hash_table.o hash_functions.o logger.o wrappe
 test_logger: test_logger.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@
 
-test_crawler: test_crawler.o crawler.o hash_table.o hash_functions.o logger.o wrapper.o
+test_crawler: test_crawler.o crawler.o filter.o hash_table.o hash_functions.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 test_hash_table.o: test_hash_table.c

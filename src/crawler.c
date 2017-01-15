@@ -5,11 +5,12 @@ bool is_dir(struct dirent* entry) {
 }
 
 void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_link) {
-	bool inserted;
 	DIR* dir = _opendir(path);
-	struct dirent* entry = NULL;
 	if (dir == NULL) return;
-
+	struct dirent* entry = NULL;
+	bool inserted;
+	int hash;
+	char entry_path[PATH_MAX], resolved_path[PATH_MAX];
 	while ((entry = readdir(dir)) != NULL) {
 		if (!(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)) {
 			strcpy(entry_path, path);
@@ -31,7 +32,12 @@ void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_li
 			}
 			else {
 				logger(LOG_DEBUG, stderr, "NOT is_dir : %s\n", resolved_path);
-				files_to_link = insert(resolved_path, files_to_link, &inserted);
+				if (!contains(resolved_path, files_to_link, &hash)) {
+					//files_to_link = insert_with_hash(resolved_path, files_to_link, &inserted, &hash);
+					// call the FILTER
+					logger(LOG_DEBUG, stderr, "hash : %d\n", hash);
+					files_to_link = filter(resolved_path, files_to_link, &hash);
+				}
 			}
 		}
 	}

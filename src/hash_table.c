@@ -43,26 +43,31 @@ bool contains(char* string, hash_table_t* hash_table, int* hash_r) {
 	return false;
 }
 
-hash_table_t* insert(char* string, hash_table_t* hash_table, bool* inserted) {
+hash_table_t* insert_with_hash(char* string, hash_table_t* hash_table, bool* inserted, int* hash) {
 	if ((double) hash_table->elements_count / (double) hash_table->capacity > hash_table->load_factor) {
 		hash_table = resize(hash_table);
 	}
-	logger(LOG_DEBUG, stderr, "//////////////////////// in insert, capacity : %d\n", hash_table->capacity);
+	logger(LOG_DEBUG, stderr, "//////////////////////// in insert_with_hash, capacity : %d\n", hash_table->capacity);
 	
-	int hash = 0;
-	if (contains(string, hash_table, &hash)) {
+	if (*hash < 0 && contains(string, hash_table, hash)) {
 		logger(LOG_DEBUG, stderr, "NOT insert %s\n", string);
 		*inserted = false;
 		return hash_table;
 	}
-	logger(LOG_DEBUG, stderr, "hash calculated by contains : %d\n", hash);
-	hash_table->table[hash].string = malloc(sizeof(char) * (strlen(string) + 1));
-	strcpy(hash_table->table[hash].string, string);
-	hash_table->table[hash].state = occupied;
+	logger(LOG_DEBUG, stderr, "hash calculated by contains : %d\n", *hash);
+	hash_table->table[*hash].string = malloc(sizeof(char) * (strlen(string) + 1));
+	strcpy(hash_table->table[*hash].string, string);
+	hash_table->table[*hash].state = occupied;
 	hash_table->elements_count++;
 	logger(LOG_DEBUG, stderr, "insert %s\n", string);
 	*inserted = true;
 	return hash_table;
+}
+
+hash_table_t* insert(char* string, hash_table_t* hash_table, bool* inserted) {
+	int hash = -1;
+	logger(LOG_DEBUG, stderr, "//////////////////////// in insert, capacity : %d\n", hash_table->capacity);
+	return insert_with_hash(string, hash_table, inserted, &hash);
 }
 
 void free_table(hash_table_t* hash_table) {

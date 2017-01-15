@@ -23,6 +23,7 @@ typedef struct hash_table_st {
 
 hash_table_t* init(int capacity, double load_factor);
 bool contains(char* string, hash_table_t* hash_table, int* hash);
+hash_table_t* insert_with_hash(char* string, hash_table_t* hash_table, bool* inserted, int* hash);
 hash_table_t* insert(char* string, hash_table_t* hash_table, bool* inserted);
 void free_table(hash_table_t* hash_table);
 void print_table(hash_table_t* hash_table);
