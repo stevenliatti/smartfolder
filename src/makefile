@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -g -Wall -Wextra -std=gnu99
+FLAGS = -g -Wall -Wextra -std=gnu99 -D_BSD_SOURCE
 TESTS = test_hash_table test_logger test_crawler
 EXEC = searchfolder $(TESTS)
 
@@ -47,8 +47,8 @@ test_hash_table: test_hash_table.o hash_table.o hash_functions.o logger.o wrappe
 test_logger: test_logger.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@
 
-test_crawler: test_crawler.o crawler.o logger.o wrapper.o
-	$(CC) $(FLAGS) $^ -o $@
+test_crawler: test_crawler.o crawler.o hash_table.o hash_functions.o logger.o wrapper.o
+	$(CC) $(FLAGS) $^ -o $@ -lm
 
 test_hash_table.o: test_hash_table.c
 	$(CC) $(FLAGS) $< -c

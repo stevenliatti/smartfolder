@@ -7,6 +7,7 @@ int main () {
 	char str[] = "lun mar mer jeu ven sam dim lun mar";
 	const char s[] = " ";
 	char *token;
+	bool inserted;
 	
 	/* get the first token */
 	token = strtok(str, s);
@@ -14,16 +15,13 @@ int main () {
 	/* walk through other tokens */
 	while(token != NULL) {
 		logger(LOG_DEBUG, stderr, "---------------------------------------------- tentative pour : %s\n", token);
-		hash_table = insert(token, hash_table);
+		hash_table = insert(token, hash_table, &inserted);
+		logger(LOG_DEBUG, stderr, "element inserted : %s\n", inserted ? "true" : "false");
 		token = strtok(NULL, s);
 	}
 
 	logger(LOG_DEBUG, stderr, "_______________________________ affichage de la hash_table\n");
-
-	for (int i = 0; i < hash_table->capacity; i++) {
-		logger(LOG_DEBUG, stderr, "%s - %d\n", hash_table->table[i].string, hash_table->table[i].state);
-	}
-
+	print_table(hash_table);
 	free_table(hash_table);
 
 	return EXIT_SUCCESS;

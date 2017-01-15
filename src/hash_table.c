@@ -15,10 +15,11 @@ hash_table_t* init(int capacity, double load_factor) {
 
 hash_table_t* resize(hash_table_t* hash_table) {
 	logger(LOG_DEBUG, stderr, "::::::::::::::::::: in resize\n");
+	bool inserted;
 	hash_table_t* new_hash_table = init(2 * hash_table->capacity, hash_table->load_factor);
 	for (int i = 0; i < hash_table->capacity; i++) {
 		if (hash_table->table[i].state != freed) {
-			insert(hash_table->table[i].string, new_hash_table);
+			insert(hash_table->table[i].string, new_hash_table, &inserted);
 		}
 	}
 	free_table(hash_table);
@@ -26,7 +27,7 @@ hash_table_t* resize(hash_table_t* hash_table) {
 	return new_hash_table;
 }
 
-hash_table_t* insert(char* string, hash_table_t* hash_table) {
+hash_table_t* insert(char* string, hash_table_t* hash_table, bool* inserted) {
 	if ((double) hash_table->elements_count / (double) hash_table->capacity > hash_table->load_factor) {
 		hash_table = resize(hash_table);
 	}
@@ -36,6 +37,7 @@ hash_table_t* insert(char* string, hash_table_t* hash_table) {
 	while(hash_table->table[hash].state != freed) {
 		if (strcmp(hash_table->table[hash].string, string) == 0 && hash_table->table[hash].state == occupied) {
 			logger(LOG_DEBUG, stderr, "NOT insert %s\n", string);
+			*inserted = false;
 			return hash_table;
 		}
 		hash = simple_and_double_hash(hash, string, hash_table->capacity);
@@ -45,6 +47,7 @@ hash_table_t* insert(char* string, hash_table_t* hash_table) {
 	hash_table->table[hash].state = occupied;
 	hash_table->elements_count++;
 	logger(LOG_DEBUG, stderr, "insert %s\n", string);
+	*inserted = true;
 	return hash_table;
 }
 
@@ -54,4 +57,10 @@ void free_table(hash_table_t* hash_table) {
 	}
 	free(hash_table->table);
 	free(hash_table);
+}
+
+void print_table(hash_table_t* hash_table) {
+	for (int i = 0; i < hash_table->capacity; i++) {
+		logger(LOG_DEBUG, stderr, "%s - %s\n", hash_table->table[i].string, hash_table->table[i].state == freed ? "freed" : "not freed");
+	}
 }

@@ -1,9 +1,10 @@
 #include "wrapper.h"
 #include "logger.h"
+#include "hash_table.h"
 
 #ifndef _CRAWLER_H_
 #define _CRAWLER_H_
 
-int crawler(const char* path);
+void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_link);
 
 #endif

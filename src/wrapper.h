@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <ftw.h>
+#include <dirent.h>
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
@@ -16,7 +16,10 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <limits.h>
 
-int _symlink(const char *oldpath, const char *newpath);
+int _symlink(const char* oldpath, const char* newpath);
+DIR* _opendir(const char* path);
+int _closedir(DIR* dir);
 
 #endif
