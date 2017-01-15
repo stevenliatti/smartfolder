@@ -4,26 +4,20 @@
 #define FILE_DESCRIPTORS 15
 #endif
 
-int walkthrough(const char *filepath, const struct stat *info, const int typeflag, struct FTW *pathinfo) {
-    const char *const filename = filepath + pathinfo->base;
+int walkthrough(const char* path, const struct stat* info, const int typeflag, struct FTW* pathinfo) {
+	logger(LOG_DEBUG, stderr, "%-3s %2d %7jd   %-40s %d %s\n",
+		(typeflag == FTW_D) ?   "d"   : (typeflag == FTW_DNR) ? "dnr" :
+		(typeflag == FTW_DP) ?  "dp"  : (typeflag == FTW_F) ?   "f" :
+		(typeflag == FTW_NS) ?  "ns"  : (typeflag == FTW_SL) ?  "sl" :
+		(typeflag == FTW_SLN) ? "sln" : "???",
+		pathinfo->level, info->st_size,
+		path, pathinfo->base, path + pathinfo->base);
 
-    logger(LOG_DEBUG, stderr, "filename : %s\n", filename);
-    logger(LOG_DEBUG, stderr, "info : %d\n", info->st_mode);
-
-    if (typeflag == FTW_SLN)
-        logger(LOG_DEBUG, stderr, " %s (dangling symlink)\n", filepath);
-    else if (typeflag == FTW_F)
-        logger(LOG_DEBUG, stderr, " %s [FICHIER]\n", filepath);
-    else if (typeflag == FTW_D || typeflag == FTW_DP)
-        logger(LOG_DEBUG, stderr, " %s [DOSSIER]\n", filepath);
-    else if (typeflag == FTW_DNR)
-        logger(LOG_DEBUG, stderr, " %s/ (unreadable)\n", filepath);
-    else
-        logger(LOG_DEBUG, stderr, " %s (unknown)\n", filepath);
-
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
-int crawler(const char* path, ) {
-    return nftw(path, walkthrough, FILE_DESCRIPTORS, 0)
+int crawler(const char* path) {
+	int result = nftw(path, walkthrough, FILE_DESCRIPTORS, 0);
+	logger(LOG_DEBUG, stderr, result == EXIT_SUCCESS ? "nftw success\n" : "nftw fail\n");
+	return result;
 }

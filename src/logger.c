@@ -1,6 +1,6 @@
 #include "logger.h"
 
-#define LOG_LEVEL 3
+#define LOG_LEVEL LOG_DEBUG
 
 void logger(int log_level, FILE *stream, char *format, ...) {
 	va_list arguments;

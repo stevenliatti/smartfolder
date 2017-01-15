@@ -7,18 +7,8 @@ int main (int argc, char** argv) {
 
 	if (argc > 1) {
 		int result = mkdir(argv[1], 0700);
-		if (result == 0)
-			logger(LOG_DEBUG, stderr, "mkdir success\n");
-		else
-			logger(LOG_DEBUG, stderr, "mkdir fail\n");
-
-		result = nftw(argv[2], crawler, 15, 0);
-		if (result == 0)
-			logger(LOG_DEBUG, stderr, "nftw success\n");
-		else
-			logger(LOG_DEBUG, stderr, "nftw fail\n");
-
-		return EXIT_SUCCESS;
+		logger(LOG_DEBUG, stderr, result == EXIT_SUCCESS ? "mkdir success\n" : "mkdir fail\n");
+		return crawler(argv[2]);
 	}
 	return EXIT_FAILURE;
 }
