@@ -6,6 +6,6 @@
 #ifndef _FILTER_H_
 #define _FILTER_H_
 
-hash_table_t* filter(char* string, hash_table_t* hash_table, int* hash);
+hash_table_t* filter(char* path, argument_t* arguments, hash_table_t* hash_table, int* hash);
 
 #endif
