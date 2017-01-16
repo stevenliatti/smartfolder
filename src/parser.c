@@ -7,11 +7,27 @@
 
 //http://stackoverflow.com/questions/2723888/where-does-getopt-long-store-an-unrecognized-option
 
+#define EQUAL 0
+#define LESS -1
+#define GREATER 1
+
+#define CREATION 0
+#define MODIFICATION 1
+#define UTILISATION 2
+
+#define NAME_EXACT 0
+#define NAME_CONTAINS 1
+
 /* Flag set by ‘--verbose’. */
 static int verbose_flag;
 
 int parse_arg(int argc, char** argv) {
 	int c;
+
+	int arg_length;
+	char arg_flag;
+	unsigned long int size;
+	int arg_modificator;
 
 	while (1)
     {
@@ -36,7 +52,7 @@ int parse_arg(int argc, char** argv) {
       /* getopt_long stores the option index here. */
       int option_index = 0;
 
-      c = getopt_long_only (argc, argv, "abc:d:f:", long_options, &option_index);
+      c = getopt_long_only (argc, argv, "abcd:e:f:g:h:i:", long_options, &option_index);
 
       /* Detect the end of the options. */
       if (c == -1)
@@ -55,23 +71,123 @@ int parse_arg(int argc, char** argv) {
           break;
 
         case 'a':
-          puts ("option -a\n");
+          printf ("(Parser) Logical operator found : -and\n");
           break;
 
         case 'b':
-          puts ("option -b\n");
+          printf ("(Parser) Logical operator found : -or\n");
           break;
 
-        case 'c':
-          printf ("option -name with value `%s'\n", optarg);
+        case 'c':			 
+          printf ("(Parser) Logical operator : -not\n");
           break;
 
-        case 'd':
-          printf ("option -name_contain with value `%s'\n", optarg);
+ 		 case 'd':
+          printf("(Parser) Option found : -name with value `%s'\n", optarg);	
+				//optarg, flag		 
           break;
-
+        case 'e':
+          printf("(Parser) Option found : -name_contain with value `%s'\n", optarg);
+				//optarg, 			 
+          break;
         case 'f':
-          printf ("option -f with value `%s'\n", optarg);
+          printf ("(Parser) Option found : -size with value `%s'\n", optarg);
+			 arg_length=strlen(optarg); 			
+
+			 arg_flag=optarg[0]; // First char, modificator
+			 switch(arg_flag) {
+				case '+':
+					arg_modificator=GREATER;
+					printf("(Parser) Option -size : modificator more found\n");
+				break;
+				case '-':
+					arg_modificator=LESS;
+					printf("(Parser) Option -size : modificator less foud\n");				
+				break;
+				default:
+					arg_modificator=EQUAL;
+					printf("(Parser) Option -size : modificator equal found\n");
+				break;
+          }
+
+			size = abs(atoi(optarg)); //Valeur absolue, pour eviter les erreurs lors de l'utilisation du modificateur -					
+
+			 arg_flag = optarg[arg_length-1]; // Last char, unit
+			 switch(arg_flag) {
+			 	case 'b':
+					printf("(Parser) Option -size : unit byte found\n");
+				break;
+				case 'k':
+					size*=1000; //10⁶
+					printf("(Parser) Option -size : unit kilobyte found\n");
+				break;
+				case 'm':
+					size*=1000000; // 10⁶
+				 	printf("(Parser) Option -size : unit megabyte found\n");
+				break;
+				case 'g':
+					size*=1000000000; //10⁹
+				 	printf("(Parser) Option -size : unit gigabyte found\n");
+				break;
+				default:
+				 printf("(Parser) Option -size : no unit found, assuming byte\n");
+				break;	
+          }
+
+			printf("(Parser) Option -size : size in byte = %lu\n", size);
+
+			// TYPE SIZE, arg_modificator, size (-> ToString)
+
+          break;
+		 case 'g':
+         printf ("(Parser) Option found : -date with value `%s'\n", optarg);
+			 arg_length=strlen(optarg); 			
+
+			 arg_flag=optarg[0]; // First char, modificator
+			 switch(arg_flag) {
+				case '+':
+					arg_modificator=GREATER;
+				   optarg[0]=' ';
+					printf("(Parser) Option -date : modificator more found\n");
+				break;
+				case '-':
+					arg_modificator=LESS;
+					optarg[0]=' ';
+					printf("(Parser) Option -date : modificator less foud\n");				
+				break;
+				default:
+					arg_modificator=EQUAL;
+					printf("(Parser) Option -date : modificator equal found\n");
+				break;
+          }
+
+
+			arg_flag = optarg[arg_length-1]; // Last char, unit
+			 switch(arg_flag) {
+			 	case 'c':
+					optarg[arg_length-1]=' ';
+					printf("(Parser) Option -date : flag creation found\n");
+				break;
+				case 'm':			
+					optarg[arg_length-1]=' ';		
+					printf("(Parser) Option -date : flag modification found\n");
+				break;
+				case 'u':		
+					optarg[arg_length-1]=' ';			
+				 	printf("(Parser) Option -date : flag utilisation found\n");
+				break;				
+				default:
+				 printf("(Parser) Option -date : no flag found, assuming creation\n");
+				break;	
+
+				 }
+				printf("(Parser) Option -date : date = %s\n",optarg);
+          break;
+		case 'h':
+          printf ("option -owner with value `%s'\n", optarg);
+          break;
+		case 'i':
+          printf ("option -perm with value `%s'\n", optarg);
           break;
 
         case '?':
@@ -84,7 +200,6 @@ int parse_arg(int argc, char** argv) {
     }
 
 
-	bool name_exact_flag;
 	
  /* Instead of reporting ‘--verbose’
      and ‘--brief’ as they are encountered,
