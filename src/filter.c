@@ -23,20 +23,31 @@ void log_stat(char* path, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "The file %s a symbolic link\n", (S_ISLNK(buf->st_mode)) ? "is" : "is not");
 }
 
-bool eval_file(char* path, argument_t* arguments) {
+bool eval_exact_name(char* path, char* expression) {
+	const char slash = '/';
+	char* filename = strrchr(path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
+	strncpy(filename, filename + 1, strlen(filename) - 0); // ici on retire le slash de filename, ex : test.txt
+	filename[strlen(filename)] = '\0'; // on met à NULL le dernier caractère de filename
+	logger(LOG_DEBUG, stderr, "in eval_exact_name, filename : %s\n", filename);
+	logger(LOG_DEBUG, stderr, "expression : %s\n", expression);
+	return strcmp(filename, expression) == 0;
+}
+
+bool eval(char* path, argument_t* arguments, int args_size) {
 	struct stat buf;
 	if(stat(path, &buf) < 0)    
 		return false;
-	log_stat(path, &buf);
-	
+	//log_stat(path, &buf);
+	logger(LOG_DEBUG, stderr, "eval_exact_name : %s\n", eval_exact_name(path, arguments[0].string) ? "true" : "false");
+
 	return true;
 }
 
-hash_table_t* filter(char* path, argument_t* arguments, hash_table_t* hash_table, int* hash) {
+hash_table_t* filter(char* path, argument_t* arguments, int args_size, hash_table_t* hash_table, int* hash) {
 	logger(LOG_DEBUG, stderr, "???????????????? In filter, path, hash : %s, %d\n", path, *hash);
 	bool inserted;
 	
-	if (eval_file(path, arguments)) {
+	if (eval(path, arguments, args_size)) {
 		logger(LOG_DEBUG, stderr, "+++++ file %s gardé\n", path);
 		return insert_with_hash(path, hash_table, &inserted, hash);
 	}
