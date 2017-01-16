@@ -16,7 +16,7 @@ hash_table_t* init(int capacity, double load_factor) {
 hash_table_t* resize(hash_table_t* hash_table) {
 	logger(LOG_DEBUG, stderr, "::::::::::::::::::: in resize\n");
 	bool inserted;
-	hash_table_t* new_hash_table = init(2 * hash_table->capacity, hash_table->load_factor);
+	hash_table_t* new_hash_table = init((int) (GROWTH_FACTOR * (double) hash_table->capacity), hash_table->load_factor);
 	for (int i = 0; i < hash_table->capacity; i++) {
 		if (hash_table->table[i].state != freed) {
 			insert(hash_table->table[i].string, new_hash_table, &inserted);

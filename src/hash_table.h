@@ -6,6 +6,7 @@
 
 #define CAPACITY 10
 #define LOAD_FACTOR 0.75
+#define GROWTH_FACTOR 2.0
 
 enum state_t { freed, occupied, deleted };
 
