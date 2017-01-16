@@ -1,6 +1,7 @@
 #include "wrapper.h"
 #include "logger.h"
 #include "hash_table.h"
+#include "argument.h"
 
 #ifndef _FILTER_H_
 #define _FILTER_H_
