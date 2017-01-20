@@ -52,13 +52,14 @@ bool eval_contain_name(char* path, char* expression) {
 }
 
 bool eval_size(char* path, argument_t* argument, struct stat* buf) {
-	logger(LOG_DEBUG, stderr, "argument string, oper : %s, %d\n", argument->string, argument->oper);
-	long size_criteria = atol(argument->string);
-	logger(LOG_DEBUG, stderr, "size_criteria = %ld\n", size_criteria);
-
+	logger(LOG_DEBUG, stderr, "path, in eval_size : %s\n", path);
+	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
+	
 	if(stat(path, buf) < 0)
 		return false;
 
+	long size_criteria = atol(argument->string);
+	logger(LOG_DEBUG, stderr, "size_criteria = %ld\n", size_criteria);
 	long size_path = (long) buf->st_size;
 	logger(LOG_DEBUG, stderr, "size_path = %ld\n", size_path);
 
@@ -76,7 +77,53 @@ bool eval_size(char* path, argument_t* argument, struct stat* buf) {
 			logger(LOG_DEBUG, stderr, "in switch, default\n");
 			return false;
 	}
-	return false;
+}
+
+bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
+	logger(LOG_DEBUG, stderr, "path, in eval_owner : %s\n", path);
+	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
+	
+	if(stat(path, buf) < 0)
+		return false;
+	
+	int id_criteria = atoi(argument->string);
+	logger(LOG_DEBUG, stderr, "id_criteria = %d\n", id_criteria);
+	int uid_path = buf->st_uid;
+	logger(LOG_DEBUG, stderr, "uid_path = %d\n", uid_path);
+	int gid_path = buf->st_gid;
+	logger(LOG_DEBUG, stderr, "gid_path = %d\n", gid_path);
+
+	switch(argument->oper) {
+		case egal_op:
+			logger(LOG_DEBUG, stderr, "in switch, egal_op\n");
+			switch(argument->flag) {
+				case user_flag:
+					logger(LOG_DEBUG, stderr, "in switch, user_flag\n");
+					return id_criteria == uid_path;
+				case group_flag:
+					logger(LOG_DEBUG, stderr, "in switch, group_flag\n");
+					return id_criteria == gid_path;
+				default:
+					logger(LOG_DEBUG, stderr, "in switch, default\n");
+					return false;
+			}
+		case not_op:
+			logger(LOG_DEBUG, stderr, "in switch, not_op\n");
+			switch(argument->flag) {
+				case user_flag:
+					logger(LOG_DEBUG, stderr, "in switch, user_flag\n");
+					return id_criteria != uid_path;
+				case group_flag:
+					logger(LOG_DEBUG, stderr, "in switch, group_flag\n");
+					return id_criteria != gid_path;
+				default:
+					logger(LOG_DEBUG, stderr, "in switch, default\n");
+					return false;
+			}
+		default:
+			logger(LOG_DEBUG, stderr, "in switch, default\n");
+			return false;
+	}
 }
 
 bool eval(char* path, argument_t* arguments, int args_size) {
@@ -84,9 +131,9 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	if(stat(path, &buf) < 0)
 		return false;
 	//log_stat(path, &buf);
-	logger(LOG_DEBUG, stderr, "in eval, before test\n");
-	bool test = eval_size(path, &arguments[4], &buf);
-	logger(LOG_DEBUG, stderr, "eval_size : %s\n", test ? "true" : "false");
+	logger(LOG_DEBUG, stderr, "in eval, before test, args_size : %d\n", args_size);
+	bool test = eval_owner(path, &arguments[14], &buf);
+	logger(LOG_DEBUG, stderr, "eval_owner : %s\n", test ? "true" : "false");
 
 	return test;
 }

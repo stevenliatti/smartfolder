@@ -36,7 +36,7 @@ void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_li
 					//files_to_link = insert_with_hash(resolved_path, files_to_link, &inserted, &hash);
 					// call the FILTER
 					logger(LOG_DEBUG, stderr, "hash : %d\n", hash);
-					files_to_link = filter(resolved_path, files_to_link, &hash);
+					files_to_link = insert_with_hash(resolved_path, files_to_link, &inserted, &hash);
 				}
 			}
 		}
