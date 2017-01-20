@@ -23,12 +23,13 @@ void log_stat(char* path, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "The file %s a symbolic link\n", (S_ISLNK(buf->st_mode)) ? "is" : "is not");
 }
 
-//char* format_path
-
 bool eval_exact_name(char* path, char* expression) {
-	logger(LOG_DEBUG, stderr, "path, in eval_exact_name : %s\n", path);
 	const char slash = '/';
-	char* filename = strrchr(path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
+	logger(LOG_DEBUG, stderr, "path, in eval_exact_name : %s\n", path);
+	char copy_path[255];
+	strcpy(copy_path, path);
+	logger(LOG_DEBUG, stderr, "copy_path : %s\n", copy_path);
+	char* filename = strrchr(copy_path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
 	strncpy(filename, filename + 1, strlen(filename) - 0); // ici on retire le slash de filename, ex : test.txt
 	filename[strlen(filename)] = '\0'; // on met à NULL le dernier caractère de filename
 	logger(LOG_DEBUG, stderr, "in eval_exact_name, filename : %s\n", filename);
@@ -37,7 +38,17 @@ bool eval_exact_name(char* path, char* expression) {
 }
 
 bool eval_contain_name(char* path, char* expression) {
-	return true;
+	const char slash = '/';
+	logger(LOG_DEBUG, stderr, "path, in eval_contain_name : %s\n", path);
+	char copy_path[255];
+	strcpy(copy_path, path);
+	logger(LOG_DEBUG, stderr, "copy_path : %s\n", copy_path);
+	char* filename = strrchr(copy_path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
+	strncpy(filename, filename + 1, strlen(filename) - 0); // ici on retire le slash de filename, ex : test.txt
+	filename[strlen(filename)] = '\0'; // on met à NULL le dernier caractère de filename
+	logger(LOG_DEBUG, stderr, "in eval_contain_name, filename : %s\n", filename);
+	logger(LOG_DEBUG, stderr, "expression : %s\n", expression);
+	return strcasestr(filename, expression) != NULL || strcasestr(expression, filename) != NULL;
 }
 
 bool eval(char* path, argument_t* arguments, int args_size) {
@@ -45,9 +56,10 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	if(stat(path, &buf) < 0)
 		return false;
 	//log_stat(path, &buf);
-	logger(LOG_DEBUG, stderr, "eval_exact_name : %s\n", eval_exact_name(path, arguments[0].string) ? "true" : "false");
+	bool test = eval_contain_name(path, arguments[1].string);
+	logger(LOG_DEBUG, stderr, "eval_contain_name : %s\n", test ? "true" : "false");
 
-	return true;
+	return test;
 }
 
 hash_table_t* filter(char* path, argument_t* arguments, int args_size, hash_table_t* hash_table, int* hash) {
@@ -55,7 +67,7 @@ hash_table_t* filter(char* path, argument_t* arguments, int args_size, hash_tabl
 	bool inserted;
 	
 	if (eval(path, arguments, args_size)) {
-		logger(LOG_DEBUG, stderr, "+++++ file %s gardé\n", path);
+		logger(LOG_DEBUG, stderr, "+++++ file %s GARDÉ DANS LA TABLE +++++\n", path);
 		// appeler le linker ici
 		return insert_with_hash(path, hash_table, &inserted, hash);
 	}
