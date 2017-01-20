@@ -21,6 +21,8 @@ void log_stat(char* path, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "\n\n");
 
 	logger(LOG_DEBUG, stderr, "The file %s a symbolic link\n", (S_ISLNK(buf->st_mode)) ? "is" : "is not");
+
+	logger(LOG_DEBUG, stderr, "Access time %d\n", buf->st_atime);
 }
 
 bool eval_exact_name(char* path, char* expression) {
@@ -58,21 +60,110 @@ bool eval_size(char* path, argument_t* argument, struct stat* buf) {
 	if(stat(path, buf) < 0)
 		return false;
 
-	long size_criteria = atol(argument->string);
-	logger(LOG_DEBUG, stderr, "size_criteria = %ld\n", size_criteria);
+	long size_criterion = atol(argument->string);
+	logger(LOG_DEBUG, stderr, "size_criterion = %ld\n", size_criterion);
 	long size_path = (long) buf->st_size;
 	logger(LOG_DEBUG, stderr, "size_path = %ld\n", size_path);
 
 	switch(argument->oper) {
 		case egal_op:
 			logger(LOG_DEBUG, stderr, "in switch, egal_op\n");
-			return size_path == size_criteria;
+			return size_path == size_criterion;
 		case less_op:
 			logger(LOG_DEBUG, stderr, "in switch, less_op\n");
-			return size_path < size_criteria;
+			return size_path < size_criterion;
 		case more_op:
 			logger(LOG_DEBUG, stderr, "in switch, more_op\n");
-			return size_path > size_criteria;	
+			return size_path > size_criterion;	
+		default:
+			logger(LOG_DEBUG, stderr, "in switch, default\n");
+			return false;
+	}
+}
+
+// respecter le format "yyyy-mm-jj", sinon faux
+long date_to_timestamp(char* date) {
+	char str[12];
+	strcpy(str, date);
+	const char s[] = "-";
+
+	struct tm t;
+	t.tm_year = atoi(strtok(str, s)) - 1900;
+	t.tm_mon = atoi(strtok(NULL, s));
+	t.tm_mday = atoi(strtok(NULL, s));
+	t.tm_hour = 0;
+	t.tm_min = 0;
+	t.tm_sec = 0;
+	t.tm_isdst = -1;
+
+	return mktime(&t);
+}
+
+bool eval_date(char* path, argument_t* argument, struct stat* buf) {
+	logger(LOG_DEBUG, stderr, "path, in eval_date : %s\n", path);
+	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
+	
+	if(stat(path, buf) < 0)
+		return false;
+	
+	long date_criterion = date_to_timestamp(argument->string);
+	logger(LOG_DEBUG, stderr, "date_criterion   = %ld\n", date_criterion);
+	long date_access_path = buf->st_atime;
+	logger(LOG_DEBUG, stderr, "date_access_path = %ld\n", date_access_path);
+	long date_modif_path  = buf->st_mtime;
+	logger(LOG_DEBUG, stderr, "date_modif_path  = %ld\n", date_modif_path);
+	long date_create_path = buf->st_ctime;
+	logger(LOG_DEBUG, stderr, "date_create_path = %ld\n", date_create_path);
+
+	switch(argument->oper) {
+		case egal_op:
+			logger(LOG_DEBUG, stderr, "in switch, egal_op\n");
+			switch(argument->flag) {
+				case date_create_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_create_flag\n");
+					return date_create_path == date_criterion;
+				case date_modif_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_modif_flag\n");
+					return date_modif_path == date_criterion;
+				case date_access_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_access_flag\n");
+					return date_access_path == date_criterion;
+				default:
+					logger(LOG_DEBUG, stderr, "in switch, default\n");
+					return false;
+			}
+		case less_op:
+			logger(LOG_DEBUG, stderr, "in switch, less_op\n");
+			switch(argument->flag) {
+				case date_create_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_create_flag\n");
+					return date_create_path < date_criterion;
+				case date_modif_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_modif_flag\n");
+					return date_modif_path < date_criterion;
+				case date_access_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_access_flag\n");
+					return date_access_path < date_criterion;
+				default:
+					logger(LOG_DEBUG, stderr, "in switch, default\n");
+					return false;
+			}
+		case more_op:
+			logger(LOG_DEBUG, stderr, "in switch, more_op\n");
+			switch(argument->flag) {
+				case date_create_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_create_flag\n");
+					return date_create_path > date_criterion; 
+				case date_modif_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_modif_flag\n");
+					return date_modif_path > date_criterion;
+				case date_access_flag:
+					logger(LOG_DEBUG, stderr, "in switch, date_access_flag\n");
+					return date_access_path > date_criterion;
+				default:
+					logger(LOG_DEBUG, stderr, "in switch, default\n");
+					return false;
+			}
 		default:
 			logger(LOG_DEBUG, stderr, "in switch, default\n");
 			return false;
@@ -86,8 +177,8 @@ bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
 	if(stat(path, buf) < 0)
 		return false;
 	
-	int id_criteria = atoi(argument->string);
-	logger(LOG_DEBUG, stderr, "id_criteria = %d\n", id_criteria);
+	int id_criterion = atoi(argument->string);
+	logger(LOG_DEBUG, stderr, "id_criterion = %d\n", id_criterion);
 	int uid_path = buf->st_uid;
 	logger(LOG_DEBUG, stderr, "uid_path = %d\n", uid_path);
 	int gid_path = buf->st_gid;
@@ -99,10 +190,10 @@ bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
 			switch(argument->flag) {
 				case user_flag:
 					logger(LOG_DEBUG, stderr, "in switch, user_flag\n");
-					return id_criteria == uid_path;
+					return id_criterion == uid_path;
 				case group_flag:
 					logger(LOG_DEBUG, stderr, "in switch, group_flag\n");
-					return id_criteria == gid_path;
+					return id_criterion == gid_path;
 				default:
 					logger(LOG_DEBUG, stderr, "in switch, default\n");
 					return false;
@@ -112,10 +203,10 @@ bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
 			switch(argument->flag) {
 				case user_flag:
 					logger(LOG_DEBUG, stderr, "in switch, user_flag\n");
-					return id_criteria != uid_path;
+					return id_criterion != uid_path;
 				case group_flag:
 					logger(LOG_DEBUG, stderr, "in switch, group_flag\n");
-					return id_criteria != gid_path;
+					return id_criterion != gid_path;
 				default:
 					logger(LOG_DEBUG, stderr, "in switch, default\n");
 					return false;
@@ -132,8 +223,8 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 		return false;
 	//log_stat(path, &buf);
 	logger(LOG_DEBUG, stderr, "in eval, before test, args_size : %d\n", args_size);
-	bool test = eval_owner(path, &arguments[14], &buf);
-	logger(LOG_DEBUG, stderr, "eval_owner : %s\n", test ? "true" : "false");
+	bool test = eval_date(path, &arguments[10], &buf);
+	logger(LOG_DEBUG, stderr, "eval_date : %s\n", test ? "true" : "false");
 
 	return test;
 }
