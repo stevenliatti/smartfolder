@@ -51,13 +51,42 @@ bool eval_contain_name(char* path, char* expression) {
 	return strcasestr(filename, expression) != NULL || strcasestr(expression, filename) != NULL;
 }
 
+bool eval_size(char* path, argument_t* argument, struct stat* buf) {
+	logger(LOG_DEBUG, stderr, "argument string, oper : %s, %d\n", argument->string, argument->oper);
+	long size_criteria = atol(argument->string);
+	logger(LOG_DEBUG, stderr, "size_criteria = %ld\n", size_criteria);
+
+	if(stat(path, buf) < 0)
+		return false;
+
+	long size_path = (long) buf->st_size;
+	logger(LOG_DEBUG, stderr, "size_path = %ld\n", size_path);
+
+	switch(argument->oper) {
+		case egal_op:
+			logger(LOG_DEBUG, stderr, "in switch, egal_op\n");
+			return size_path == size_criteria;
+		case less_op:
+			logger(LOG_DEBUG, stderr, "in switch, less_op\n");
+			return size_path < size_criteria;
+		case more_op:
+			logger(LOG_DEBUG, stderr, "in switch, more_op\n");
+			return size_path > size_criteria;	
+		default:
+			logger(LOG_DEBUG, stderr, "in switch, default\n");
+			return false;
+	}
+	return false;
+}
+
 bool eval(char* path, argument_t* arguments, int args_size) {
 	struct stat buf;
 	if(stat(path, &buf) < 0)
 		return false;
 	//log_stat(path, &buf);
-	bool test = eval_contain_name(path, arguments[1].string);
-	logger(LOG_DEBUG, stderr, "eval_contain_name : %s\n", test ? "true" : "false");
+	logger(LOG_DEBUG, stderr, "in eval, before test\n");
+	bool test = eval_size(path, &arguments[4], &buf);
+	logger(LOG_DEBUG, stderr, "eval_size : %s\n", test ? "true" : "false");
 
 	return test;
 }
