@@ -22,35 +22,32 @@ void log_stat(char* path, struct stat* buf) {
 
 	logger(LOG_DEBUG, stderr, "The file %s a symbolic link\n", (S_ISLNK(buf->st_mode)) ? "is" : "is not");
 
-	logger(LOG_DEBUG, stderr, "Access time %d\n", buf->st_atime);
+	logger(LOG_DEBUG, stderr, "Access time %d\n\n", buf->st_atime);
 }
 
-bool eval_exact_name(char* path, char* expression) {
+bool eval_name(char* path, argument_t* argument) {
+	logger(LOG_DEBUG, stderr, "path, in eval_name : %s\n", path);
 	const char slash = '/';
-	logger(LOG_DEBUG, stderr, "path, in eval_exact_name : %s\n", path);
 	char copy_path[255];
 	strcpy(copy_path, path);
 	logger(LOG_DEBUG, stderr, "copy_path : %s\n", copy_path);
 	char* filename = strrchr(copy_path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
 	strncpy(filename, filename + 1, strlen(filename) - 0); // ici on retire le slash de filename, ex : test.txt
 	filename[strlen(filename)] = '\0'; // on met à NULL le dernier caractère de filename
-	logger(LOG_DEBUG, stderr, "in eval_exact_name, filename : %s\n", filename);
-	logger(LOG_DEBUG, stderr, "expression : %s\n", expression);
-	return strcmp(filename, expression) == 0;
-}
+	logger(LOG_DEBUG, stderr, "in eval_name, filename : %s\n", filename);
+	logger(LOG_DEBUG, stderr, "argument->string : %s\n", argument->string);
 
-bool eval_contain_name(char* path, char* expression) {
-	const char slash = '/';
-	logger(LOG_DEBUG, stderr, "path, in eval_contain_name : %s\n", path);
-	char copy_path[255];
-	strcpy(copy_path, path);
-	logger(LOG_DEBUG, stderr, "copy_path : %s\n", copy_path);
-	char* filename = strrchr(copy_path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
-	strncpy(filename, filename + 1, strlen(filename) - 0); // ici on retire le slash de filename, ex : test.txt
-	filename[strlen(filename)] = '\0'; // on met à NULL le dernier caractère de filename
-	logger(LOG_DEBUG, stderr, "in eval_contain_name, filename : %s\n", filename);
-	logger(LOG_DEBUG, stderr, "expression : %s\n", expression);
-	return strcasestr(filename, expression) != NULL || strcasestr(expression, filename) != NULL;
+	switch(argument->type) {
+		case name_exact_arg:
+			logger(LOG_DEBUG, stderr, "in switch, name_exact_arg\n");
+			return strcmp(filename, argument->string) == 0;
+		case name_contain_arg:
+			logger(LOG_DEBUG, stderr, "in switch, name_contain_arg\n");
+			return strcasestr(filename, argument->string) != NULL || strcasestr(argument->string, filename) != NULL;
+		default:
+			logger(LOG_DEBUG, stderr, "in switch, default\n");
+			return false;
+	}
 }
 
 bool eval_size(char* path, argument_t* argument, struct stat* buf) {
@@ -83,7 +80,7 @@ bool eval_size(char* path, argument_t* argument, struct stat* buf) {
 
 // respecter le format "yyyy-mm-jj", sinon faux
 long date_to_timestamp(char* date) {
-	char str[12];
+	char str[11]; // 10 + '\0'
 	strcpy(str, date);
 	const char s[] = "-";
 
@@ -215,6 +212,10 @@ bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
 			logger(LOG_DEBUG, stderr, "in switch, default\n");
 			return false;
 	}
+}
+
+bool eval_perm(char* path, argument_t* argument, struct stat* buf) {
+	return false;
 }
 
 bool eval(char* path, argument_t* arguments, int args_size) {
