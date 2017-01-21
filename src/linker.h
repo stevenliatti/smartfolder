@@ -1,3 +1,12 @@
+/**
+ * @file linker.h
+ * @brief      Header du linker.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
+
 #include "wrapper.h"
 #include "logger.h"
 

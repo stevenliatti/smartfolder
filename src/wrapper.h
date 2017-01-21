@@ -1,3 +1,12 @@
+/**
+ * @file wrapper.h
+ * @brief      Header du wrapper pour les appels systèmes utilisés.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
+
 #ifndef _WRAPPER_H_
 #define _WRAPPER_H_
 

@@ -1,21 +1,43 @@
 /**
-* @file list_bool.c
-*
-* Implémentation des fonctions permettant la gestion d'une liste.
-*
-* @author Steven Liatti
-*/
+ * @file list_bool.c
+ * @brief      Implémentation des fonctions permettant la gestion d'une
+ *             liste/pile de boolean.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
 
 #include "list_bool.h"
 
+/**
+ * @brief      Fonction retournant une nouvelle liste vide.
+ *
+ * @return     la nouvelle liste.
+ */
 list_t* new_list() {
 	return NULL;
 }
 
+/**
+ * @brief      Fonction retournant true si une liste est vide.
+ *
+ * @param      list  une list_t*.
+ *
+ * @return     true si une liste est vide, false sinon.
+ */
 bool is_empty(const list_t* list) {
 	return list == NULL;
 }
 
+/**
+ * @brief      Fonction insérant en tête d'une liste <list> les données <value>.
+ *
+ * @param      list   une list_t*.
+ * @param      value  en boolean.
+ *
+ * @return     la liste mise à jour.
+ */
 list_t* insert_head(list_t* list, bool value) {
 	list_t* new_list = malloc(sizeof(list_t));
 	new_list->value = value;
@@ -23,6 +45,16 @@ list_t* insert_head(list_t* list, bool value) {
 	return new_list;
 }
 
+
+/**
+ * @brief      Fonction insérant en queue d'une liste <list> les données
+ *             <value>.
+ *
+ * @param      list   une list_t*.
+ * @param      value  en boolean.
+ *
+ * @return     la liste mise à jour.
+ */
 list_t* insert_tail(list_t* list, bool value) {
 	list_t* new_list = malloc(sizeof(list_t));
 	new_list->value = value;
@@ -43,55 +75,13 @@ list_t* insert_tail(list_t* list, bool value) {
 	return list;
 }
 
-list_t* search(list_t* list, bool value) {
-	if (list == NULL) {
-		return list;
-	}
-	else {
-		list_t* temp = list;
-		
-		while (temp != NULL) {
-			if (temp->value == value) {
-				return temp;
-			}
-			temp = temp->next;
-		}
-		
-		return temp;
-	}
-}
-
-list_t* remove_list(list_t* list, bool value) {
-	list_t* temp = list;
-	
-	// Si l'élément contenant value se trouve en tête de liste. 
-	if (list != NULL) {
-		if (list->value == value) {
-			list = list->next;
-			free(temp);
-			return list;
-		}
-		// Sinon on le cherche plus loin dans la liste chainée.
-		else {
-			while (temp->next != NULL) {
-				if (temp->next->value == value) {
-					list_t* anotherTemp = temp->next;
-					temp->next = temp->next->next;
-					free(anotherTemp);
-					return list;
-				}
-				else {
-					temp = temp->next;
-				}
-			}
-			
-			return list;
-		}
-	}
-	
-	return list;
-}
-
+/**
+ * @brief      Fonction supprimant l'élément en tête de la liste <list>.
+ *
+ * @param      list  une list_t*.
+ *
+ * @return     la liste mise à jour.
+ */
 list_t* remove_head_list(list_t* list) {
 	list_t* temp = list;
 	
@@ -103,6 +93,16 @@ list_t* remove_head_list(list_t* list) {
 	return list;
 }
 
+
+/**
+ * @brief      Fonction supprimant l'élément en tête de la liste <list> et place
+ *             la value dans <value>.
+ *
+ * @param      list   une list_t*.
+ * @param      value  un pointeur sur un boolean.
+ *
+ * @return     la liste mise à jour.
+ */
 list_t* remove_head_list_bool(list_t* list, bool* value) {
 	list_t* temp = list;
 	
@@ -115,6 +115,13 @@ list_t* remove_head_list_bool(list_t* list, bool* value) {
 	return list;
 }
 
+/**
+ * @brief      Fonction retournant la taille d'une liste en int.
+ *
+ * @param      list  une list_t*.
+ *
+ * @return     taille d'une liste en unsigned int.
+ */
 unsigned int count(list_t* list) {
 	list_t* temp = list;
 	int size = 0;
@@ -131,6 +138,12 @@ unsigned int count(list_t* list) {
 	return size;
 }
 
+/**
+ * @brief      Fonction supprimant une liste chainée <list> entière.
+ *
+ * @param      list  une list_t*.
+ * @return     la liste mise à jour.
+ */
 void free_all_list(list_t* list) {
 	list_t* temp = list;
 	
@@ -139,19 +152,4 @@ void free_all_list(list_t* list) {
 		free(temp);
 		temp = list;
 	}
-}
-
-bool print_list(bool value) {
-	logger(LOG_DEBUG, stderr, "%d ", value);
-	return value;
-}
-
-void apply(list_t* list, bool(*oper)(bool n)) {
-	list_t* temp = list;
-	
-	while (temp != NULL) {
-		temp->value = oper(temp->value);
-		temp = temp->next;
-	}
-	logger(LOG_DEBUG, stderr, "\n");
 }

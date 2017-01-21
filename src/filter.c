@@ -1,3 +1,13 @@
+/**
+ * @file filter.c
+ * @brief      Module Filter, décide si un fichier correspond aux critères
+ *             demandés ou non.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
+
 #include "filter.h"
 
 void log_stat(char* path, struct stat* buf) {
@@ -25,6 +35,15 @@ void log_stat(char* path, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "Access time %d\n\n", buf->st_atime);
 }
 
+/**
+ * @brief      Test si le nom du fichier courant correspond exactement ou
+ *             partiellement au nom de recherche.
+ *
+ * @param      path      Le fichier à évaluer.
+ * @param      argument  Le critère à évaluer.
+ *
+ * @return     Un boolean, vrai si le nom correspond, faux sinon.
+ */
 bool eval_name(char* path, argument_t* argument) {
 	logger(LOG_DEBUG, stderr, "path, in eval_name : %s\n", path);
 	char copy_path[255];
@@ -49,6 +68,17 @@ bool eval_name(char* path, argument_t* argument) {
 	}
 }
 
+/**
+ * @brief      Test la taille du fichier courant selon les critères demandés
+ *             pour la taille.
+ *
+ * @param      path      Le fichier à évaluer.
+ * @param      argument  Le critère à évaluer.
+ * @param      buf       Un pointeur sur une structure stat, pour récupérer les
+ *                       infos du fichier à tester.
+ *
+ * @return     Un boolean, vrai si les critères sont remplis, faux sinon.
+ */
 bool eval_size(char* path, argument_t* argument, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "path, in eval_size : %s\n", path);
 	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
@@ -77,7 +107,14 @@ bool eval_size(char* path, argument_t* argument, struct stat* buf) {
 	}
 }
 
-// respecter le format "yyyy-mm-jj", sinon faux
+/**
+ * @brief      Convertit une date sous le format "yyyy-mm-jj" en timestamp
+ *             (nombre de secondes après le 1er janvier 1970).
+ *
+ * @param      date  La date, sous le format "yyyy-mm-jj"
+ *
+ * @return     Le timestamp, en long.
+ */
 long date_to_timestamp(char* date) {
 	char str[11]; // 10 + '\0'
 	strcpy(str, date);
@@ -95,6 +132,17 @@ long date_to_timestamp(char* date) {
 	return mktime(&t);
 }
 
+/**
+ * @brief      Test la date du fichier courant selon les critères demandés pour
+ *             la date.
+ *
+ * @param      path      Le fichier à évaluer.
+ * @param      argument  Le critère à évaluer.
+ * @param      buf       Un pointeur sur une structure stat, pour récupérer les
+ *                       infos du fichier à tester.
+ *
+ * @return     Un boolean, vrai si les critères sont remplis, faux sinon.
+ */
 bool eval_date(char* path, argument_t* argument, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "path, in eval_date : %s\n", path);
 	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
@@ -166,6 +214,17 @@ bool eval_date(char* path, argument_t* argument, struct stat* buf) {
 	}
 }
 
+/**
+ * @brief      Test le propriétaire du fichier courant selon les critères
+ *             demandés pour le propriétaire.
+ *
+ * @param      path      Le fichier à évaluer.
+ * @param      argument  Le critère à évaluer.
+ * @param      buf       Un pointeur sur une structure stat, pour récupérer les
+ *                       infos du fichier à tester.
+ *
+ * @return     Un boolean, vrai si les critères sont remplis, faux sinon.
+ */
 bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "path, in eval_owner : %s\n", path);
 	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
@@ -213,21 +272,44 @@ bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
 	}
 }
 
+/**
+ * @brief      Test les droits d'accès du fichier courant selon les critères
+ *             demandés ceux-ci.
+ *
+ * @param      path      Le fichier à évaluer.
+ * @param      argument  Le critère à évaluer.
+ * @param      buf       Un pointeur sur une structure stat, pour récupérer les
+ *                       infos du fichier à tester.
+ *
+ * @return     Un boolean, vrai si les critères sont remplis, faux sinon.
+ */
 bool eval_perm(char* path, argument_t* argument, struct stat* buf) {
 	return false;
 }
 
+/**
+ * @brief      Fonction d'évaluation principale. Elle prend en argument le
+ *             fichier courant et la liste de tous les critères. Pour chaque
+ *             critère, elle appelle la bonne sous-fonction d'évaluation. Stocke
+ *             le sous-résultat dans une pile. Étant donné que les arguments
+ *             sont attendus sous la notation polonaise inverse, si un opérateur
+ *             arrive, le ou les éléments précédents sont dépilés et l'opérateur
+ *             leur est appliqué. Si tout se passe bien, il ne reste plus qu'un
+ *             élément dans la pile, qui indique si le fichier correspond aux
+ *             critères de recherche ou non.
+ *
+ * @param      path       Le fichier à évaluer.
+ * @param      arguments  Les critères à évaluer.
+ * @param[in]  args_size  La taille des arguments.
+ *
+ * @return     Un boolean, vrai si les critères sont remplis, faux sinon.
+ */
 bool eval(char* path, argument_t* arguments, int args_size) {
 	struct stat buf;
 	if(stat(path, &buf) < 0)
 		return false;
-	//log_stat(path, &buf);
-	// logger(LOG_DEBUG, stderr, "in eval, before test, args_size : %d\n", args_size);
-	// bool test = eval_date(path, &arguments[10], &buf);
-	// logger(LOG_DEBUG, stderr, "eval_date : %s\n", test ? "true" : "false");
 
 	list_t* stack = new_list();
-	//name_exact_arg, name_contain_arg, size_arg, date_arg, owner_arg, perm_arg, and_op_arg, or_op_arg, not_op_arg
 	for (int i = 0; i < args_size; i++) {
 		switch((&arguments[i])->type) {
 			case name_exact_arg:
@@ -296,8 +378,28 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	return eval;
 }
 
+/**
+ * @brief      Fonction de filtre, décide si le fichier en argument doit être
+ *             linké. Appelle la fonction eval, si eval == true alors le filtre
+ *             appelle le linker et ajoute le fichier courante à la table de
+ *             hash des fichiers ayant un lien. Sinon, elle retourne la table de
+ *             hash inchangée.
+ *
+ * @param      path         Le fichier courant.
+ * @param      folder_path  Le dossier de destination des liens créés, transmis
+ *                          au Linker.
+ * @param      arguments    La liste des arguments fournis en ligne de commande.
+ * @param[in]  args_size    La taille des arguments.
+ * @param      hash_table   La table de hash contenant les fichiers ayant un
+ *                          lien.
+ * @param      hash         La position dans la table, déjà calculée dans le
+ *                          Crawler au moment de tester si le fichier y était
+ *                          déjà contenu.
+ *
+ * @return     La table de hash contenant les fichiers ayant un lien.
+ */
 hash_table_t* filter(char* path, char* folder_path, argument_t* arguments, int args_size, hash_table_t* hash_table, int* hash) {
-	logger(LOG_DEBUG, stderr, "???????????????? In filter, path, hash : %s, %d\n", path, *hash);
+	logger(LOG_DEBUG, stderr, "In filter, path, hash : %s, %d\n", path, *hash);
 	bool inserted;
 	
 	if (eval(path, arguments, args_size)) {

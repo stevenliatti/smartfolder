@@ -1,11 +1,50 @@
+/**
+ * @file crawler.c
+ * @brief      Module Crawler, parcoure le dossier et les sous-dossiers de
+ *             recherche donné en argument du programme.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
+
 #include "crawler.h"
 #include "argument.h"
 
+/**
+ * @brief      Détermine si entry est dossier ou non.
+ *
+ * @param      entry  Un pointeur sur une struct dirent
+ *
+ * @return     Un booléan, vrai si c'est dossier (ou un lien symbolique vers un
+ *             dossier), faux dans les autres cas.
+ */
 bool is_dir(struct dirent* entry) {
 	return entry->d_type == DT_DIR || entry->d_type == DT_LNK;
 }
 
-void crawler(char* path, char* folder_path, hash_table_t* paths_traveled, hash_table_t* files_to_link, argument_t* arguments, int args_size) {
+/**
+ * @brief      Parcoure le dossier path et ses sous-dossiers. Évite les boucles
+ *             infinies grâce à une table de hash (paths_traveled). Si un
+ *             fichier est déjà contenu dans la table de hash des fichiers, le
+ *             Filter n'est pas appelé. Si path est un dossier, se rappelle
+ *             elle-même avec ce dossier comme nouveau path.
+ *
+ * @param      path            Le chemin du dossier/fichier.
+ * @param      folder_path     Le chemin du dossier de destination des éventuels
+ *                             liens.
+ * @param      paths_traveled  La table de hash nécessaire pour éviter les
+ *                             boucles au sein de l'arborescence de path (pour
+ *                             mémoriser le chemin parcouru).
+ * @param      files_to_link   La table de hash qui contient les fichiers qui
+ *                             ont été linkés par le Linker, pour ne pas
+ *                             repasser par les tests du filtre.
+ * @param      arguments       Les arguments fournis en ligne de commande, à
+ *                             transmettre au filtre.
+ * @param[in]  args_size       Le nombre de ces arguments.
+ */
+void crawler(char* path, char* folder_path, hash_table_t* paths_traveled, 
+	hash_table_t* files_to_link, argument_t* arguments, int args_size) {
 	DIR* dir = _opendir(path);
 	if (dir == NULL) return;
 	struct dirent* entry = NULL;

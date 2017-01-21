@@ -1,3 +1,12 @@
+/**
+ * @file filter.h
+ * @brief      Header du Filter.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
+
 #include "wrapper.h"
 #include "logger.h"
 #include "hash_table.h"
