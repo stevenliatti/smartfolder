@@ -32,7 +32,7 @@ list_t* new_list();
 * @param list une list_t*.
 * @return true si une liste est vide, false sinon.
 */
-bool is_empty(list_t* list);
+bool is_empty(const list_t* list);
 
 /**
 * Fonction insérant en tête d'une liste <list> les données <value>.
@@ -79,6 +79,16 @@ list_t* remove_list(list_t* list, bool value);
 list_t* remove_head_list(list_t* list);
 
 /**
+* Fonction supprimant l'élément en tête de la liste <list> et place
+* la value dans <value>.
+* 
+* @param list une list_t*.
+* @param value un pointeur sur un boolean.
+* @return la liste mise à jour.
+*/
+list_t* remove_head_list_bool(list_t* list, bool* value);
+
+/**
 * Fonction retournant la taille d'une liste en int.
 * 
 * @param list une list_t*.
@@ -101,7 +111,7 @@ void free_all_list(list_t* list);
 * @param list une list_t*.
 * @return void
 */
-int print_list(bool value);
+bool print_list(bool value);
 
 /**
 * Fonction appliquant l'opération (la fonction) en paramètres sur la liste

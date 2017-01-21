@@ -99,9 +99,9 @@ int main (int argc, char** argv) {
 		arguments[14].oper = not_op;
 		arguments[14].flag = group_flag;
 
-		// test access_arg none_op none_flag
+		// test perm_arg none_op none_flag
 		strcpy(arguments[15].string, "0");
-		arguments[15].type = owner_arg;
+		arguments[15].type = perm_arg;
 		arguments[15].oper = none_op;
 		arguments[15].flag = none_flag;
 
@@ -116,6 +116,6 @@ int main (int argc, char** argv) {
 	}
 }
 
-// enum arg_type_t { name_exact_arg, name_contain_arg, size_arg, date_arg, owner_arg, access_arg, logic_op_arg };
+// enum arg_type_t { name_exact_arg, name_contain_arg, size_arg, date_arg, owner_arg, perm_arg, logic_op_arg };
 // enum math_op_t { none_op, egal_op, less_op, more_op, not_op };
 // enum flags_t { none_flag, date_create_flag, date_modif_flag, date_access_flag, user_flag, group_flag };

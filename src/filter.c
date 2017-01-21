@@ -223,11 +223,78 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	if(stat(path, &buf) < 0)
 		return false;
 	//log_stat(path, &buf);
-	logger(LOG_DEBUG, stderr, "in eval, before test, args_size : %d\n", args_size);
-	bool test = eval_date(path, &arguments[10], &buf);
-	logger(LOG_DEBUG, stderr, "eval_date : %s\n", test ? "true" : "false");
+	// logger(LOG_DEBUG, stderr, "in eval, before test, args_size : %d\n", args_size);
+	// bool test = eval_date(path, &arguments[10], &buf);
+	// logger(LOG_DEBUG, stderr, "eval_date : %s\n", test ? "true" : "false");
 
-	return test;
+	list_t* stack = new_list();
+	//name_exact_arg, name_contain_arg, size_arg, date_arg, owner_arg, perm_arg, and_op_arg, or_op_arg, not_op_arg
+	for (int i = 0; i < args_size; i++) {
+		switch((&arguments[i])->type) {
+			case name_exact_arg:
+				stack = insert_head(stack, eval_name(path, &arguments[i]));
+				break;
+			case name_contain_arg:
+				stack = insert_head(stack, eval_name(path, &arguments[i]));
+				break;
+			case size_arg:
+				stack = insert_head(stack, eval_size(path, &arguments[i], &buf));
+				break;
+			case date_arg:
+				stack = insert_head(stack, eval_date(path, &arguments[i], &buf));
+				break;
+			case owner_arg:
+				stack = insert_head(stack, eval_owner(path, &arguments[i], &buf));
+				break;
+			case perm_arg:
+				stack = insert_head(stack, eval_perm(path, &arguments[i], &buf));
+				break;
+			case and_op_arg:
+			case or_op_arg:
+				if (is_empty(stack)) {
+					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
+					return false;
+				}
+				bool criterion_one;
+				bool criterion_two;
+				stack = remove_head_list_bool(stack, &criterion_two);
+				if (is_empty(stack)) {
+					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
+					return false;
+				}
+				stack = remove_head_list_bool(stack, &criterion_one);
+
+				switch((&arguments[i])->type) {
+					case and_op_arg:
+						stack = insert_head(stack, criterion_one && criterion_two);
+						break;
+					case or_op_arg:
+						stack = insert_head(stack, criterion_one || criterion_two);
+						break;
+					default:
+						break;
+				}
+				break;
+			case not_op_arg:
+				if (is_empty(stack)) {
+					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
+					return false;
+				}
+				stack->value = !(stack)->value;
+				break;
+			default:
+				break;
+		}
+	}
+
+	if (is_empty(stack) || count(stack) != 1) {
+		logger(LOG_ERROR, stderr, "La pile est vide ou a plus que 1 élément, erreur dans les arguments\n");
+		return false;
+	}
+	bool eval;
+	stack = remove_head_list_bool(stack, &eval);
+	free_all_list(stack);
+	return eval;
 }
 
 hash_table_t* filter(char* path, argument_t* arguments, int args_size, hash_table_t* hash_table, int* hash) {

@@ -1,12 +1,12 @@
 /**
-* @file list.c
+* @file list_bool.c
 *
 * Implémentation des fonctions permettant la gestion d'une liste.
 *
 * @author Steven Liatti
 */
 
-#include "list.h"
+#include "list_bool.h"
 
 list_t* new_list() {
 	return NULL;
@@ -17,14 +17,14 @@ bool is_empty(const list_t* list) {
 }
 
 list_t* insert_head(list_t* list, bool value) {
-	list_t* new_list = malloc(sizeof(ListElement));
+	list_t* new_list = malloc(sizeof(list_t));
 	new_list->value = value;
 	new_list->next = list;
 	return new_list;
 }
 
 list_t* insert_tail(list_t* list, bool value) {
-	list_t* new_list = malloc(sizeof(ListElement));
+	list_t* new_list = malloc(sizeof(list_t));
 	new_list->value = value;
 	new_list->next = NULL;
 	
@@ -96,6 +96,18 @@ list_t* remove_head_list(list_t* list) {
 	list_t* temp = list;
 	
 	if (list != NULL) {	
+		list = list->next;
+		free(temp);
+	}
+	
+	return list;
+}
+
+list_t* remove_head_list_bool(list_t* list, bool* value) {
+	list_t* temp = list;
+	
+	if (list != NULL) {
+		*value = list->value;		
 		list = list->next;
 		free(temp);
 	}

@@ -7,7 +7,7 @@ EXEC = searchfolder $(TESTS)
 all: $(EXEC)
 
 # Programme principal
-searchfolder: searchfolder.o parser.o crawler.o hash_table.o hash_functions.o filter.o linker.o logger.o wrapper.o
+searchfolder: searchfolder.o parser.o crawler.o list_bool.o hash_table.o hash_functions.o filter.o linker.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 searchfolder.o: searchfolder.c
@@ -18,6 +18,9 @@ parser.o: parser.c
 	$(CC) $(FLAGS) $< -c
 
 crawler.o: crawler.c
+	$(CC) $(FLAGS) $< -c
+
+list_bool.o: list_bool.c
 	$(CC) $(FLAGS) $< -c
 
 hash_table.o: hash_table.c
@@ -50,7 +53,7 @@ test_logger: test_logger.o logger.o wrapper.o
 test_crawler: test_crawler.o crawler.o filter.o hash_table.o hash_functions.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
-test_filter: test_filter.o filter.o hash_table.o hash_functions.o logger.o wrapper.o
+test_filter: test_filter.o filter.o list_bool.o hash_table.o hash_functions.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 test_hash_table.o: test_hash_table.c

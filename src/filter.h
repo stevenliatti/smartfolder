@@ -2,6 +2,7 @@
 #include "logger.h"
 #include "hash_table.h"
 #include "argument.h"
+#include "list_bool.h"
 
 #ifndef _FILTER_H_
 #define _FILTER_H_
