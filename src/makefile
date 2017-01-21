@@ -7,7 +7,7 @@ EXEC = searchfolder $(TESTS)
 all: $(EXEC)
 
 # Programme principal
-searchfolder: searchfolder.o parser.o crawler.o list_bool.o hash_table.o hash_functions.o filter.o linker.o logger.o wrapper.o
+searchfolder: searchfolder.o parser.o crawler.o list_bool.o list_arg.o hash_table.o hash_functions.o filter.o linker.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@ -lm
 
 searchfolder.o: searchfolder.c
@@ -21,6 +21,9 @@ crawler.o: crawler.c
 	$(CC) $(FLAGS) $< -c
 
 list_bool.o: list_bool.c
+	$(CC) $(FLAGS) $< -c
+
+list_arg.o: list_arg.c
 	$(CC) $(FLAGS) $< -c
 
 hash_table.o: hash_table.c

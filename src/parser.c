@@ -1,4 +1,6 @@
 #include "parser.h"
+#include "argument.h"
+#include "list_arg.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +12,7 @@
 #define EQUAL 0
 #define LESS -1
 #define GREATER 1
+#define NOT 2
 
 #define CREATION 0
 #define MODIFICATION 1
@@ -28,6 +31,9 @@ int parse_arg(int argc, char** argv) {
 	char arg_flag;
 	unsigned long int size;
 	int arg_modificator;
+   argument_t* arg;
+
+	list_t* arg_list = larg_new_list();
 
 	while (1)
     {
@@ -71,41 +77,61 @@ int parse_arg(int argc, char** argv) {
           break;
 
         case 'a':
-          printf ("(Parser) Logical operator found : -and\n");
+			 arg = malloc(sizeof(argument_t));
+			 arg->type = and_op_arg;
+			 arg_list = larg_insert_tail(arg_list, arg);
+          printf ("(Parser) Logical operator found : -and\n");			 
           break;
 
         case 'b':
+			 arg = malloc(sizeof(argument_t));
+			 arg->type = or_op_arg;
+			 arg_list = larg_insert_tail(arg_list, arg);
           printf ("(Parser) Logical operator found : -or\n");
           break;
 
         case 'c':			 
+			 arg = malloc(sizeof(argument_t));
+			 arg->type = not_op_arg;
+			 arg_list = larg_insert_tail(arg_list, arg);
           printf ("(Parser) Logical operator : -not\n");
           break;
 
  		 case 'd':
+			 arg = malloc(sizeof(argument_t));
+			 arg->type = name_exact_arg;
+			 sprintf(arg->string,"%s",optarg);
+			 arg_list = larg_insert_tail(arg_list, arg);
           printf("(Parser) Option found : -name with value `%s'\n", optarg);	
-				//optarg, flag		 
+				 
           break;
         case 'e':
+			 arg = malloc(sizeof(argument_t));
+			 arg->type = name_contain_arg;
+			 sprintf(arg->string,"%s",optarg);
+			 arg_list = larg_insert_tail(arg_list, arg);
           printf("(Parser) Option found : -name_contain with value `%s'\n", optarg);
 				//optarg, 			 
           break;
         case 'f':
+
+			 arg = malloc(sizeof(argument_t));
+			 arg->type = size_arg;			
           printf ("(Parser) Option found : -size with value `%s'\n", optarg);
 			 arg_length=strlen(optarg); 			
 
 			 arg_flag=optarg[0]; // First char, modificator
 			 switch(arg_flag) {
 				case '+':
-					arg_modificator=GREATER;
+					 arg->oper = more_op;
 					printf("(Parser) Option -size : modificator more found\n");
 				break;
 				case '-':
-					arg_modificator=LESS;
+					arg->oper = less_op;
 					printf("(Parser) Option -size : modificator less foud\n");				
 				break;
 				default:
-					arg_modificator=EQUAL;
+					arg->oper = none_op;
 					printf("(Parser) Option -size : modificator equal found\n");
 				break;
           }
@@ -136,8 +162,12 @@ int parse_arg(int argc, char** argv) {
 
 			printf("(Parser) Option -size : size in byte = %lu\n", size);
 
-			// TYPE SIZE, arg_modificator, size (-> ToString)
 
+			sprintf(arg->string, "%lu", size);
+			 
+			 arg_list = larg_insert_tail(arg_list, arg);
+
+			
           break;
 		 case 'g':
          printf ("(Parser) Option found : -date with value `%s'\n", optarg);
@@ -184,7 +214,39 @@ int parse_arg(int argc, char** argv) {
 				printf("(Parser) Option -date : date = %s\n",optarg);
           break;
 		case 'h':
-          printf ("option -owner with value `%s'\n", optarg);
+          printf ("(Parser) option found :-owner with value `%s'\n", optarg);
+			arg_length=strlen(optarg); 			
+
+			 arg_flag=optarg[0]; // First char, modificator
+			 switch(arg_flag) {
+				case '!':
+					arg_modificator=GREATER;
+				   optarg[0]=' ';
+					printf("(Parser) Option -owner : modificator not found\n");
+				break;
+				default:
+					arg_modificator=EQUAL;
+					printf("(Parser) Option -owner : modificator equal found\n");
+				break;
+          }
+
+			arg_flag = optarg[arg_length-1]; // Last char, unit
+			 switch(arg_flag) {
+			 	case 'u':
+					optarg[arg_length-1]=' ';
+					printf("(Parser) Option -owner : flag user found\n");
+				break;
+				case 'g':			
+					optarg[arg_length-1]=' ';		
+					printf("(Parser) Option -owner : flag group found\n");
+				break;		
+				default:
+				 	printf("(Parser) Option -owner : no flag found, assuming user\n");
+				break;	
+
+				 }
+
+
           break;
 		case 'i':
           printf ("option -perm with value `%s'\n", optarg);
@@ -199,6 +261,15 @@ int parse_arg(int argc, char** argv) {
         }
     }
 
+	//APPELER SUITE ICI
+
+	list_t* next = arg_list;
+	while(next != NULL) {
+		argument_t* val = next->value;
+		printf("(Parser)Type=%d|Op=%d|Flag=%d|String=%s\n",val->type,val->oper,val->flag,val->string);
+		next = next->next;
+ }
+
 
 	
  /* Instead of reporting ‘--verbose’
@@ -210,7 +281,7 @@ int parse_arg(int argc, char** argv) {
   /* Print any remaining command line arguments (not options). */
   if (optind < argc)
     {
-      printf ("non-option ARGV-elements: ");
+      printf ("(Parser) Unknown argument found : ");
       while (optind < argc)
         printf ("%s ", argv[optind++]);
       putchar ('\n');
