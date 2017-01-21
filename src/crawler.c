@@ -1,10 +1,11 @@
 #include "crawler.h"
+#include "argument.h"
 
 bool is_dir(struct dirent* entry) {
 	return entry->d_type == DT_DIR || entry->d_type == DT_LNK;
 }
 
-void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_link) {
+void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_link, argument_t* arguments, int args_size) {
 	DIR* dir = _opendir(path);
 	if (dir == NULL) return;
 	struct dirent* entry = NULL;
@@ -27,16 +28,16 @@ void crawler(char* path, hash_table_t* paths_traveled, hash_table_t* files_to_li
 				logger(LOG_DEBUG_DONE, stderr, "is_dir : %s\n", resolved_path);
 				paths_traveled = insert(resolved_path, paths_traveled, &inserted);
 				if (inserted) {
-					crawler(entry_path, paths_traveled, files_to_link);
+					crawler(entry_path, paths_traveled, files_to_link, arguments, args_size);
 				}
 			}
 			else {
 				logger(LOG_DEBUG_DONE, stderr, "NOT is_dir : %s\n", resolved_path);
 				if (!contains(resolved_path, files_to_link, &hash)) {
-					// call the FILTER
-					//files_to_link = filter(resolved_path, files_to_link, &hash);
 					logger(LOG_DEBUG_DONE, stderr, "hash : %d\n", hash);
-					files_to_link = insert_with_hash(resolved_path, files_to_link, &inserted, &hash);
+					//files_to_link = insert_with_hash(resolved_path, files_to_link, &inserted, &hash);
+					// call the FILTER
+					files_to_link = filter(resolved_path, arguments, args_size, files_to_link, &hash);
 				}
 			}
 		}

@@ -302,7 +302,7 @@ hash_table_t* filter(char* path, argument_t* arguments, int args_size, hash_tabl
 	bool inserted;
 	
 	if (eval(path, arguments, args_size)) {
-		logger(LOG_DEBUG, stderr, "+++++ file %s GARDÉ DANS LA TABLE +++++\n", path);
+		logger(LOG_DEBUG, stderr, "+++++ fichier %s GARDÉ DANS LA TABLE +++++\n", path);
 		// appeler le linker ici
 		return insert_with_hash(path, hash_table, &inserted, hash);
 	}

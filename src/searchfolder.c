@@ -1,29 +1,26 @@
 #include "wrapper.h"
 #include "logger.h"
 #include "crawler.h"
+#include "filter.h"
 #include "parser.h"
 
 int main(int argc, char** argv) {
-	parse_arg(argc,argv);
-/*
 	if (argc > 1) {
-		int result = mkdir(argv[1], 0700);
-		if (result == 0) {
-			printf("mkdir success\n");
-		}
-		else {
-			printf("mkdir fail\n");
-		}
+		hash_table_t* files_to_link  = init(CAPACITY, LOAD_FACTOR);
+		hash_table_t* paths_traveled = init(CAPACITY, LOAD_FACTOR);
+		argument_t* arguments;
+		int args_size = 0;
 
-		result = nftw(argv[2], crawler, USE_FDS, 0);
-		if (result == 0) {
-			printf("nftw success\n");
-		}
-		else {
-			printf("nftw fail\n");
-		}
+		//	PLACER LE PARSER ICI
 
+		int result = mkdir(argv[1], 0777);
+		logger(LOG_DEBUG, stderr, "mkdir %s\n", result == 0 ? "success" : "fail");
+		
+		crawler(argv[2], paths_traveled, files_to_link, arguments, args_size);
+
+		free_table(files_to_link);
+		free_table(paths_traveled);
 		return EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE; */
+	return EXIT_FAILURE;
 }

@@ -1,5 +1,5 @@
 #include "wrapper.h"
 
-void linker() {
-
+int linker(const char* oldpath, const char* newpath) {
+	return 0;
 }
