@@ -105,7 +105,7 @@ int main (int argc, char** argv) {
 		arguments[15].oper = none_op;
 		arguments[15].flag = none_flag;
 
-		hash_table = filter(argv[1], arguments, size, hash_table, &hash);
+		hash_table = filter(argv[1], argv[2], arguments, size, hash_table, &hash);
 		free_table(hash_table);
 		logger(LOG_DEBUG, stderr, "fin de test_filter\n");
 		return EXIT_SUCCESS;

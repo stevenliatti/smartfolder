@@ -297,13 +297,15 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	return eval;
 }
 
-hash_table_t* filter(char* path, argument_t* arguments, int args_size, hash_table_t* hash_table, int* hash) {
+hash_table_t* filter(char* path, char* folder_path, argument_t* arguments, int args_size, hash_table_t* hash_table, int* hash) {
 	logger(LOG_DEBUG, stderr, "???????????????? In filter, path, hash : %s, %d\n", path, *hash);
 	bool inserted;
 	
 	if (eval(path, arguments, args_size)) {
 		logger(LOG_DEBUG, stderr, "+++++ fichier %s GARDÉ DANS LA TABLE +++++\n", path);
 		// appeler le linker ici
+		logger(LOG_DEBUG, stderr, "folder_path : %s\n", folder_path);
+		linker(path, folder_path);
 		return insert_with_hash(path, hash_table, &inserted, hash);
 	}
 	logger(LOG_DEBUG, stderr, "Fin de filter\n");
