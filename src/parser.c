@@ -24,7 +24,7 @@
 /* Flag set by ‘--verbose’. */
 static int verbose_flag;
 
-int parse_arg(int argc, char** argv) {
+list_t* parse_arg(int argc, char** argv) {
 	int c;
 
 	int arg_length;
@@ -261,8 +261,6 @@ int parse_arg(int argc, char** argv) {
         }
     }
 
-	//APPELER SUITE ICI
-
 	list_t* next = arg_list;
 	while(next != NULL) {
 		argument_t* val = next->value;
@@ -287,5 +285,5 @@ int parse_arg(int argc, char** argv) {
       putchar ('\n');
     } 
 	
-	return 1;
+	return arg_list;
 }
