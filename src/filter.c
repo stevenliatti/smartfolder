@@ -27,11 +27,10 @@ void log_stat(char* path, struct stat* buf) {
 
 bool eval_name(char* path, argument_t* argument) {
 	logger(LOG_DEBUG, stderr, "path, in eval_name : %s\n", path);
-	const char slash = '/';
 	char copy_path[255];
 	strcpy(copy_path, path);
 	logger(LOG_DEBUG, stderr, "copy_path : %s\n", copy_path);
-	char* filename = strrchr(copy_path, slash); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
+	char* filename = strrchr(copy_path, '/'); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
 	strncpy(filename, filename + 1, strlen(filename) - 0); // ici on retire le slash de filename, ex : test.txt
 	filename[strlen(filename)] = '\0'; // on met à NULL le dernier caractère de filename
 	logger(LOG_DEBUG, stderr, "in eval_name, filename : %s\n", filename);

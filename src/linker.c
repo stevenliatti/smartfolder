@@ -1,9 +1,36 @@
+/**
+ * @file linker.c
+ * @brief      Ce fichier contient la partie création des liens du projet.
+ * @author     Steven Liatti
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
+
 #include "linker.h"
 
-int linker(const char* file_linked, const char* link_name) {
+/**
+ * @brief      Fonction qui crée un lien symbolique link_path vers file_linked.
+ *             Elle gère le cas ou un lien ayant le même nom, mais pointant vers
+ *             un autre fichier, existe déjà : elle rajoute un nombre aléatoire
+ *             entre 0 et 9999 au nom du fichier.
+ *
+ * @param[in]  file_linked  Le fichier à lier
+ * @param[in]  link_path    Le nom du lien (le nom de file_linked)
+ *
+ * @return     0 en cas de succès de la création du lien, -1 sinon
+ */
+int linker(const char* file_linked, const char* link_path) {
+	char copy_file_linked[255];
+	strcpy(copy_file_linked, file_linked);
+	logger(LOG_DEBUG, stderr, "copy_file_linked : %s\n", copy_file_linked);
+	char* filename_only = strrchr(copy_file_linked, '/'); // ici on récupère le nom du fichier avec le slash, ex : /test.txt
+	filename_only[strlen(filename_only)] = '\0'; // on met à NULL le dernier caractère de filename_only
+
 	char resolved_file_linked[PATH_MAX], resolved_link_name[PATH_MAX];
 	realpath(file_linked, resolved_file_linked);
-	realpath(link_name, resolved_link_name);
+	realpath(link_path, resolved_link_name);
+	strcat(resolved_link_name, filename_only);
 	logger(LOG_DEBUG, stderr, "in linker, resolved_file_linked, resolved_link_name : \n");
 	logger(LOG_DEBUG, stderr, "%s,\t%s\n", resolved_file_linked, resolved_link_name);
 	int res = _symlink(resolved_file_linked, resolved_link_name);
@@ -14,7 +41,8 @@ int linker(const char* file_linked, const char* link_name) {
 		char str[5];
 		sprintf(str, "%d", i);
 		char copy_link_name[PATH_MAX];
-		strcpy(copy_link_name, link_name);
+		strcpy(copy_link_name, link_path);
+		strcat(copy_link_name, filename_only);
 		logger(LOG_DEBUG, stderr, "copy_link_name : %s\n", copy_link_name);
 		strcat(copy_link_name, str);
 		realpath(copy_link_name, resolved_link_name);
