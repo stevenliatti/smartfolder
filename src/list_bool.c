@@ -15,31 +15,31 @@
  *
  * @return     la nouvelle liste.
  */
-list_t* new_list() {
+list_bool_t* new_list() {
 	return NULL;
 }
 
 /**
  * @brief      Fonction retournant true si une liste est vide.
  *
- * @param      list  une list_t*.
+ * @param      list  une list_bool_t*.
  *
  * @return     true si une liste est vide, false sinon.
  */
-bool is_empty(const list_t* list) {
+bool is_empty(const list_bool_t* list) {
 	return list == NULL;
 }
 
 /**
  * @brief      Fonction insérant en tête d'une liste <list> les données <value>.
  *
- * @param      list   une list_t*.
+ * @param      list   une list_bool_t*.
  * @param      value  en boolean.
  *
  * @return     la liste mise à jour.
  */
-list_t* insert_head(list_t* list, bool value) {
-	list_t* new_list = malloc(sizeof(list_t));
+list_bool_t* insert_head(list_bool_t* list, bool value) {
+	list_bool_t* new_list = malloc(sizeof(list_bool_t));
 	new_list->value = value;
 	new_list->next = list;
 	return new_list;
@@ -50,13 +50,13 @@ list_t* insert_head(list_t* list, bool value) {
  * @brief      Fonction insérant en queue d'une liste <list> les données
  *             <value>.
  *
- * @param      list   une list_t*.
+ * @param      list   une list_bool_t*.
  * @param      value  en boolean.
  *
  * @return     la liste mise à jour.
  */
-list_t* insert_tail(list_t* list, bool value) {
-	list_t* new_list = malloc(sizeof(list_t));
+list_bool_t* insert_tail(list_bool_t* list, bool value) {
+	list_bool_t* new_list = malloc(sizeof(list_bool_t));
 	new_list->value = value;
 	new_list->next = NULL;
 	
@@ -64,7 +64,7 @@ list_t* insert_tail(list_t* list, bool value) {
 		return new_list;
 	}
 	
-	list_t* temp = list;
+	list_bool_t* temp = list;
 	
 	while (temp->next != NULL) {
 		temp = temp->next;
@@ -78,12 +78,12 @@ list_t* insert_tail(list_t* list, bool value) {
 /**
  * @brief      Fonction supprimant l'élément en tête de la liste <list>.
  *
- * @param      list  une list_t*.
+ * @param      list  une list_bool_t*.
  *
  * @return     la liste mise à jour.
  */
-list_t* remove_head_list(list_t* list) {
-	list_t* temp = list;
+list_bool_t* remove_head_list(list_bool_t* list) {
+	list_bool_t* temp = list;
 	
 	if (list != NULL) {	
 		list = list->next;
@@ -98,13 +98,13 @@ list_t* remove_head_list(list_t* list) {
  * @brief      Fonction supprimant l'élément en tête de la liste <list> et place
  *             la value dans <value>.
  *
- * @param      list   une list_t*.
+ * @param      list   une list_bool_t*.
  * @param      value  un pointeur sur un boolean.
  *
  * @return     la liste mise à jour.
  */
-list_t* remove_head_list_bool(list_t* list, bool* value) {
-	list_t* temp = list;
+list_bool_t* remove_head_list_bool(list_bool_t* list, bool* value) {
+	list_bool_t* temp = list;
 	
 	if (list != NULL) {
 		*value = list->value;		
@@ -118,12 +118,12 @@ list_t* remove_head_list_bool(list_t* list, bool* value) {
 /**
  * @brief      Fonction retournant la taille d'une liste en int.
  *
- * @param      list  une list_t*.
+ * @param      list  une list_bool_t*.
  *
  * @return     taille d'une liste en unsigned int.
  */
-unsigned int count(list_t* list) {
-	list_t* temp = list;
+unsigned int count(list_bool_t* list) {
+	list_bool_t* temp = list;
 	int size = 0;
 	
 	if (temp == NULL) {
@@ -141,11 +141,11 @@ unsigned int count(list_t* list) {
 /**
  * @brief      Fonction supprimant une liste chainée <list> entière.
  *
- * @param      list  une list_t*.
+ * @param      list  une list_bool_t*.
  * @return     la liste mise à jour.
  */
-void free_all_list(list_t* list) {
-	list_t* temp = list;
+void free_all_list(list_bool_t* list) {
+	list_bool_t* temp = list;
 	
 	while (list != NULL) {
 		list = list->next;

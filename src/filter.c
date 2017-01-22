@@ -334,7 +334,7 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	if(stat(path, &buf) < 0)
 		return false;
 
-	list_t* stack = new_list();
+	list_bool_t* stack = new_list();
 	for (int i = 0; i < args_size; i++) {
 		switch((&arguments[i])->type) {
 			case name_exact_arg:
