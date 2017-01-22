@@ -2,7 +2,7 @@
  * @file crawler.c
  * @brief      Module Crawler, parcoure le dossier et les sous-dossiers de
  *             recherche donné en argument du programme.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

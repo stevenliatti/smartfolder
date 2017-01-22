@@ -1,12 +1,11 @@
 /**
  * @file parser.h
  * @brief      Header du parser.
- * @author     Matthieu Constant
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0
  */
-
 
 #include <stdio.h>
 #include <stdlib.h>

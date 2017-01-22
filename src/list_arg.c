@@ -1,10 +1,10 @@
 /**
-* @file list_arg.c
-*
-* Implémentation des fonctions permettant la gestion d'une liste.
-*
-* @author Steven Liatti
-*/
+ * @file list_arg.c
+ *
+ * @brief      Implémentation des fonctions permettant la gestion d'une liste.
+ *
+ * @author     Steven Liatti et Matthieu Constant
+ */
 
 #include "list_arg.h"
 

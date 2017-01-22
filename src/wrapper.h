@@ -1,7 +1,7 @@
 /**
  * @file wrapper.h
  * @brief      Header du wrapper pour les appels systèmes utilisés.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

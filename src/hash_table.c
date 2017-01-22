@@ -1,7 +1,7 @@
 /**
  * @file hash_table.c
  * @brief      Gestion d'une table de hachage.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

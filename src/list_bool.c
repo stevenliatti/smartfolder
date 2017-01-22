@@ -2,7 +2,7 @@
  * @file list_bool.c
  * @brief      Implémentation des fonctions permettant la gestion d'une
  *             liste/pile de boolean.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

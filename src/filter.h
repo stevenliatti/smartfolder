@@ -1,7 +1,7 @@
 /**
  * @file filter.h
  * @brief      Header du Filter.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

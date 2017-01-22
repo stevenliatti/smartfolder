@@ -3,7 +3,7 @@
  * @brief      Ce fichier contient les énumérations et la structure pour la
  *             gestion des arguments du programme. Cette structure est partagée
  *             par le Parser et par le Filter.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

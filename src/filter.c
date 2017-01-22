@@ -2,7 +2,7 @@
  * @file filter.c
  * @brief      Module Filter, décide si un fichier correspond aux critères
  *             demandés ou non.
- * @author     Steven Liatti
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0

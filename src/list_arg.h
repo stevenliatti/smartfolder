@@ -1,10 +1,10 @@
 /**
-* @file list_arg.h
-*
-* Header des fonctions permettant la gestion d'une liste.
-*
-* @author Steven Liatti
-*/
+ * @file list_arg.h
+ *
+ * @brief      Header des fonctions permettant la gestion d'une liste.
+ *
+ * @author     Steven Liatti et Matthieu Constant
+ */
 
 #include "wrapper.h"
 #include "logger.h"

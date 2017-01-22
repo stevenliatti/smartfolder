@@ -2,7 +2,7 @@
  * @file parser.c
  * @brief      Module du parser, lis les arguments et les prépare pour la suite.
  *             du traitement
- * @author     Matthieu Constant
+ * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
  * @version    1.0
