@@ -284,7 +284,32 @@ bool eval_owner(char* path, argument_t* argument, struct stat* buf) {
  * @return     Un boolean, vrai si les critères sont remplis, faux sinon.
  */
 bool eval_perm(char* path, argument_t* argument, struct stat* buf) {
-	return false;
+	bool perm = true;
+	char perm_char[9];
+
+	//On copie toutes les permissions du fichier dans un tableau de caractères.
+	perm_char[0] = ((buf->st_mode & S_IRUSR) ? 'r' : '-');
+	perm_char[1] = ((buf->st_mode & S_IWUSR) ? 'w' : '-');
+	perm_char[2] = ((buf->st_mode & S_IXUSR) ? 'x' : '-');
+	perm_char[3] = ((buf->st_mode & S_IRGRP) ? 'r' : '-');
+	perm_char[4] = ((buf->st_mode & S_IWGRP) ? 'w' : '-');
+	perm_char[5] = ((buf->st_mode & S_IXGRP) ? 'x' : '-');
+	perm_char[6] = ((buf->st_mode & S_IROTH) ? 'r' : '-');
+	perm_char[7] = ((buf->st_mode & S_IWOTH) ? 'w' : '-');
+	perm_char[8] = ((buf->st_mode & S_IXOTH) ? 'x' : '-');
+
+	//On compare chaque permission du fichier avec les permission données en paramètres.
+	for (int i=0;i<9;i++) {
+		if(argument->string[i] != perm_char[i]) {
+			perm = false;
+			break; //Plus besoin de controler les permissions suivantes
+		}			
+	}	
+
+	logger(LOG_DEBUG, stderr,"(Filter) Verification des permissions : %d\n",perm) ;
+	logger(LOG_DEBUG, stderr,"(Filter) Path=%s\n",path) ;
+	
+	return perm;
 }
 
 /**
