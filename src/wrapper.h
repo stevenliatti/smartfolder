@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <signal.h>
 #include <dirent.h>
 #include <time.h>
 #include <string.h>
@@ -29,8 +30,8 @@
 #include <limits.h>
 
 int _symlink(const char* oldpath, const char* newpath);
-DIR* _opendir(const char* path);
-int _closedir(DIR* dir);
 pid_t _fork();
+int _access(const char* name, int mode);
+int _kill(pid_t pid, int sig);
 
 #endif
