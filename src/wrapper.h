@@ -31,5 +31,6 @@
 int _symlink(const char* oldpath, const char* newpath);
 DIR* _opendir(const char* path);
 int _closedir(DIR* dir);
+pid_t _fork();
 
 #endif

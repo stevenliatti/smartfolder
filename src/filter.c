@@ -10,31 +10,6 @@
 
 #include "filter.h"
 
-void log_stat(char* path, struct stat* buf) {
-	logger(LOG_DEBUG, stderr, "Information for %s\n", path);
-	logger(LOG_DEBUG, stderr, "---------------------------\n");
-	logger(LOG_DEBUG, stderr, "File Size: \t\t%d bytes\n",buf->st_size);
-	logger(LOG_DEBUG, stderr, "Number of Links: \t%d\n",buf->st_nlink);
-	logger(LOG_DEBUG, stderr, "File inode: \t\t%d\n",buf->st_ino);
-
-	logger(LOG_DEBUG, stderr, "File Permissions: \t");
-	logger(LOG_DEBUG, stderr, (S_ISDIR(buf->st_mode)) ? "d" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IRUSR) ? "r" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IWUSR) ? "w" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IXUSR) ? "x" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IRGRP) ? "r" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IWGRP) ? "w" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IXGRP) ? "x" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IROTH) ? "r" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IWOTH) ? "w" : "-");
-	logger(LOG_DEBUG, stderr, (buf->st_mode & S_IXOTH) ? "x" : "-");
-	logger(LOG_DEBUG, stderr, "\n\n");
-
-	logger(LOG_DEBUG, stderr, "The file %s a symbolic link\n", (S_ISLNK(buf->st_mode)) ? "is" : "is not");
-
-	logger(LOG_DEBUG, stderr, "Access time %d\n\n", buf->st_atime);
-}
-
 /**
  * @brief      Test si le nom du fichier courant correspond exactement ou
  *             partiellement au nom de recherche.
@@ -306,8 +281,8 @@ bool eval_perm(char* path, argument_t* argument, struct stat* buf) {
 		}			
 	}	
 
-	logger(LOG_DEBUG, stderr,"(Filter) Verification des permissions : %d\n",perm) ;
-	logger(LOG_DEBUG, stderr,"(Filter) Path=%s\n",path) ;
+	logger(LOG_DEBUG, stderr,"(Filter) Check permissions : %d\n",perm) ;
+	logger(LOG_DEBUG, stderr,"(Filter) Path = %s\n",path) ;
 	
 	return perm;
 }
@@ -358,14 +333,14 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 			case and_op_arg:
 			case or_op_arg:
 				if (is_empty(stack)) {
-					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
+					logger(LOG_ERROR, stderr, "Stack is empty, bad arguments\n");
 					exit(EXIT_FAILURE);
 				}
 				bool criterion_one;
 				bool criterion_two;
 				stack = remove_head_list_bool(stack, &criterion_two);
 				if (is_empty(stack)) {
-					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
+					logger(LOG_ERROR, stderr, "Stack is empty, bad arguments\n");
 					exit(EXIT_FAILURE);
 				}
 				stack = remove_head_list_bool(stack, &criterion_one);
@@ -383,7 +358,7 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 				break;
 			case not_op_arg:
 				if (is_empty(stack)) {
-					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
+					logger(LOG_ERROR, stderr, "Stack is empty, bad arguments\n");
 					exit(EXIT_FAILURE);
 				}
 				stack->value = !(stack)->value;
@@ -394,7 +369,7 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 	}
 
 	if (is_empty(stack) || count(stack) != 1) {
-		logger(LOG_ERROR, stderr, "La pile est vide ou a plus que 1 élément, erreur dans les arguments\n");
+		logger(LOG_ERROR, stderr, "Stack is empty or has more than one element, bad arguments\n");
 		exit(EXIT_FAILURE);
 	}
 	bool eval;
@@ -428,12 +403,12 @@ hash_table_t* filter(char* path, char* folder_path, argument_t* arguments, int a
 	bool inserted;
 	
 	if (eval(path, arguments, args_size)) {
-		logger(LOG_DEBUG, stderr, "+++++ fichier %s GARDÉ DANS LA TABLE +++++\n", path);
+		logger(LOG_DEBUG, stderr, "+++++ File %s KEEP IN THE TABLE +++++\n", path);
 		// appeler le linker ici
 		logger(LOG_DEBUG, stderr, "folder_path : %s\n", folder_path);
 		linker(path, folder_path);
 		return insert_with_hash(path, hash_table, &inserted, hash);
 	}
-	logger(LOG_DEBUG, stderr, "Fin de filter\n");
+	logger(LOG_DEBUG, stderr, "End filter\n");
 	return hash_table;
 }

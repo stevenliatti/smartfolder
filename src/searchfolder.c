@@ -41,5 +41,9 @@ int main(int argc, char** argv) {
 		free_table(paths_traveled);
 		return EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE;
+	else {
+		logger(LOG_INFO, stderr, "For launch a searchfolder :\nsearchfolder <dir_name> <search_path> [expression]\n");
+		logger(LOG_INFO, stderr, "For delete a searchfolder :\nsearchfolder -d <dir_name>\n");
+		return EXIT_FAILURE;
+	}
 }

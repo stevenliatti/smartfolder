@@ -42,3 +42,13 @@ DIR* _opendir(const char* path) {
 int _closedir(DIR* dir) {
 	return closedir(dir);
 }
+
+/**
+ * @brief      Wrapper de la fonction fork.
+ *
+ * @return     Le pid de l'enfant dans le parent et 0 dans l'enfant. -1 si
+ *             erreur.
+ */
+pid_t _fork() {
+	return fork();
+}
