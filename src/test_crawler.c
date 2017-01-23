@@ -12,7 +12,7 @@ int main (int argc, char** argv) {
 		int result = mkdir(argv[1], 0700);
 		logger(LOG_DEBUG, stderr, result == EXIT_SUCCESS ? "mkdir success\n" : "mkdir fail\n");
 
-		crawler(argv[2], paths_traveled, files_to_link);
+		crawler(argv[2], argv[1], paths_traveled, files_to_link, NULL, 0);
 
 		logger(LOG_DEBUG, stderr, "crawler terminé\n");
 

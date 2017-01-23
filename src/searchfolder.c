@@ -1,11 +1,11 @@
 /**
-* @file searchfolder.c
-* @brief      Main
-* @author     Steven Liatti et Matthieu Constant
-* @bug        Pas de bugs connus
-* @date       Janvier 2017
-* @version    1.0
-*/
+ * @file searchfolder.c
+ * @brief      Main
+ * @author     Steven Liatti et Matthieu Constant
+ * @bug        Pas de bugs connus
+ * @date       Janvier 2017
+ * @version    1.0
+ */
 
 #include "wrapper.h"
 #include "logger.h"

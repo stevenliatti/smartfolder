@@ -54,18 +54,6 @@ list_arg_t* larg_remove_head_list(list_arg_t* list) {
 	return list;
 }
 
-list_arg_t* larg_remove_head_list_arg(list_arg_t* list, argument_t* value) {
-	list_arg_t* temp = list;
-
-	if (list != NULL) {
-		value = list->value;
-		list = list->next;
-		free(temp);
-	}
-	
-	return list;
-}
-
 unsigned int larg_count(list_arg_t* list) {
 	list_arg_t* temp = list;
 	int size = 0;

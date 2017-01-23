@@ -359,14 +359,14 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 			case or_op_arg:
 				if (is_empty(stack)) {
 					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
-					return false;
+					exit(EXIT_FAILURE);
 				}
 				bool criterion_one;
 				bool criterion_two;
 				stack = remove_head_list_bool(stack, &criterion_two);
 				if (is_empty(stack)) {
 					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
-					return false;
+					exit(EXIT_FAILURE);
 				}
 				stack = remove_head_list_bool(stack, &criterion_one);
 
@@ -384,7 +384,7 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 			case not_op_arg:
 				if (is_empty(stack)) {
 					logger(LOG_ERROR, stderr, "La pile est vide, erreur dans les arguments\n");
-					return false;
+					exit(EXIT_FAILURE);
 				}
 				stack->value = !(stack)->value;
 				break;
@@ -395,7 +395,7 @@ bool eval(char* path, argument_t* arguments, int args_size) {
 
 	if (is_empty(stack) || count(stack) != 1) {
 		logger(LOG_ERROR, stderr, "La pile est vide ou a plus que 1 élément, erreur dans les arguments\n");
-		return false;
+		exit(EXIT_FAILURE);
 	}
 	bool eval;
 	stack = remove_head_list_bool(stack, &eval);

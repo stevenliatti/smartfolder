@@ -31,7 +31,7 @@ bool is_prime(unsigned int number) {
 		if (number % i == 0)
 			is_prime = false;
 	}
-	logger(LOG_DEBUG_DONE, stderr, "is_prime return : (%d) %d\n", number, is_prime);
+	logger(LOG_DEBUG, stderr, "is_prime return : (%d) %d\n", number, is_prime);
 	return is_prime;
 }
 
@@ -57,7 +57,7 @@ unsigned int closest_prime_number(unsigned int number, bool higher) {
 			i--;
 		} while (!is_prime(i) && i > 1);
 	}
-	logger(LOG_DEBUG_DONE, stderr, "closest_prime_number return : %d\n", i);
+	logger(LOG_DEBUG, stderr, "closest_prime_number return : %d\n", i);
 	return i;
 }
 
@@ -76,7 +76,7 @@ unsigned int simple_hash(char* string, unsigned int size_of_table) {
 	for(int i = 0; i < (int) strlen(string); i++)
 		hash = hash + string[i];
 
-	logger(LOG_DEBUG_DONE, stderr, "simple_hash return : %d, %d\n", hash, hash % size_of_table);
+	logger(LOG_DEBUG, stderr, "simple_hash return : %d, %d\n", hash, hash % size_of_table);
 	return hash % size_of_table;
 }
 
@@ -91,7 +91,7 @@ unsigned int simple_hash(char* string, unsigned int size_of_table) {
  */
 unsigned int double_hash(char* string, unsigned int size_of_table) {
 	unsigned int i = 1 + (simple_hash(string, size_of_table) % closest_prime_number(size_of_table, false));
-	logger(LOG_DEBUG_DONE, stderr, "double_hash return : %d\n", i);
+	logger(LOG_DEBUG, stderr, "double_hash return : %d\n", i);
 	return i;
 }
 
@@ -106,6 +106,6 @@ unsigned int double_hash(char* string, unsigned int size_of_table) {
  */
 unsigned int simple_and_double_hash(unsigned int simple_hash, char* string, unsigned int size_of_table) {
 	unsigned int i = (simple_hash + double_hash(string, size_of_table)) % size_of_table;
-	logger(LOG_DEBUG_DONE, stderr, "simple_and_double_hash return : %d\n", i);
+	logger(LOG_DEBUG, stderr, "simple_and_double_hash return : %d\n", i);
 	return i;
 }
