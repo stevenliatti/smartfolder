@@ -7,10 +7,10 @@
  * @version    1.0
  */
 
-#include "wrapper.h"
-
 #ifndef _LOGGER_H_
 #define _LOGGER_H_
+
+#include "wrapper.h"
 
 #define LOG_ERROR 0
 #define LOG_WARNING 1

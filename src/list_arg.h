@@ -6,12 +6,12 @@
  * @author     Steven Liatti et Matthieu Constant
  */
 
+#ifndef _LIST_ARG_H_
+#define _LIST_ARG_H_
+
 #include "wrapper.h"
 #include "logger.h"
 #include "argument.h"
-
-#ifndef _LIST_ARG_H_
-#define _LIST_ARG_H_
 
 typedef struct list_arg_st {
 	argument_t* value;

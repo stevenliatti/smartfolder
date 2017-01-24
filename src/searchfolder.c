@@ -21,7 +21,7 @@
 /**
  * @brief      Point d'entrée du programme.
  *
- * @param[in]  argc  Le nombre d'arguements.
+ * @param[in]  argc  Le nombre d'arguments.
  * @param      argv  Le tableau d'arguments.
  *
  * @return     Codes de sortie.

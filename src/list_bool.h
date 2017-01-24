@@ -7,12 +7,12 @@
  * @version    1.0
  */
 
+#ifndef _LIST_BOOL_H_
+#define _LIST_BOOL_H_
+
 #include "wrapper.h"
 #include "logger.h"
 #include "argument.h"
-
-#ifndef _LIST_BOOL_H_
-#define _LIST_BOOL_H_
 
 /**
  * @struct list_bool_t list_bool.h

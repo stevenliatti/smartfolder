@@ -9,12 +9,12 @@
  * @version    1.0
  */
 
+#ifndef _ARGUMENT_H_
+#define _ARGUMENT_H_
+
 #include "wrapper.h"
 #include "logger.h"
 #include "hash_table.h"
-
-#ifndef _ARGUMENT_H_
-#define _ARGUMENT_H_
 
 /**
  * @brief      Énumération des différents critères de recherche possibles.

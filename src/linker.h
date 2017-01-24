@@ -7,11 +7,11 @@
  * @version    1.0
  */
 
-#include "wrapper.h"
-#include "logger.h"
-
 #ifndef _LINKER_H_
 #define _LINKER_H_
+
+#include "wrapper.h"
+#include "logger.h"
 
 int linker(const char* file_linked, const char* link_path);
 

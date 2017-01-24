@@ -7,6 +7,9 @@
  * @version    1.0
  */
 
+#ifndef _PARSER_H_
+#define _PARSER_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -18,10 +21,7 @@
 #include "argument.h"
 #include "list_arg.h"
 
-#ifndef _PARSER_H_
-#define _PARSER_H_
-
-bool regex_match(char* request, char* regex);bool regex_match(char* request, char* regex);
+bool regex_match(char* request, char* regex);
 argument_t* parse_arg(int argc, char** argv, int* args_size);
 
 #endif

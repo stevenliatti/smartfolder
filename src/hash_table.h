@@ -7,11 +7,11 @@
  * @version    1.0
  */
 
-#include "wrapper.h"
-#include "hash_functions.h"
-
 #ifndef _HASH_TABLE_H_
 #define _HASH_TABLE_H_
+
+#include "wrapper.h"
+#include "hash_functions.h"
 
 #define CAPACITY 10
 #define LOAD_FACTOR 0.75

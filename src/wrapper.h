@@ -28,6 +28,8 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <limits.h>
+#include <getopt.h>
+#include <regex.h>
 
 int _symlink(const char* oldpath, const char* newpath);
 pid_t _fork();

@@ -45,7 +45,6 @@ list_bool_t* insert_head(list_bool_t* list, bool value) {
 	return new_list;
 }
 
-
 /**
  * @brief      Fonction insérant en queue d'une liste <list> les données
  *             <value>.
@@ -92,7 +91,6 @@ list_bool_t* remove_head_list(list_bool_t* list) {
 	
 	return list;
 }
-
 
 /**
  * @brief      Fonction supprimant l'élément en tête de la liste <list> et place

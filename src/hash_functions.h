@@ -7,11 +7,11 @@
  * @version    1.0
  */
 
-#include "wrapper.h"
-#include "logger.h"
-
 #ifndef _HASH_FUNCTIONS_H_
 #define _HASH_FUNCTIONS_H_
+
+#include "wrapper.h"
+#include "logger.h"
 
 unsigned int closest_prime_number(unsigned int number, bool higher);
 unsigned int simple_hash(char* string, unsigned int size_of_table);
