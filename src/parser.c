@@ -87,6 +87,7 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 			arg->type = and_op_arg;
 			arg->oper = none_op;
 			arg->flag = none_flag;
+			arg->string[0]='\0';
 			arg_list = larg_insert_tail(arg_list, arg);
 			logger(LOG_DEBUG, stderr, "(Parser) Logical operator found : -and\n");
 			break;
@@ -96,6 +97,7 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 			arg->type = or_op_arg;
 			arg->oper = none_op;
 			arg->flag = none_flag;
+			arg->string[0]='\0';
 			arg_list = larg_insert_tail(arg_list, arg);
 			logger(LOG_DEBUG, stderr, "(Parser) Logical operator found : -or\n");
 			break;
@@ -105,6 +107,7 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 			arg->type = not_op_arg;
 			arg->oper = none_op;
 			arg->flag = none_flag;
+			arg->string[0]='\0';
 			arg_list = larg_insert_tail(arg_list, arg);
 			logger(LOG_DEBUG, stderr, "(Parser) Logical operator : -not\n");
 			break;
@@ -190,12 +193,14 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 			switch(arg_flag) {
 				case '+': //More
 				arg->oper = more_op;
-				optarg[0]=' ';
+				//optarg[0]=' ';				
+    			memmove(optarg, optarg+1, strlen(optarg)); //On supprime le premier caractère en déplacant la chaine 
 				logger(LOG_DEBUG, stderr, "(Parser) Option -date : modificator more found\n");
 				break;
 				case '-': //Less
 				arg->oper = less_op;
-				optarg[0]=' ';
+				//optarg[0]=' ';
+				memmove(optarg, optarg+1, strlen(optarg));
 				logger(LOG_DEBUG, stderr, "(Parser) Option -date : modificator less foud\n");
 				break;
 				default: //Equal
@@ -284,7 +289,7 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 
 			case 'i': //--perm
 
-			if(regex_match(optarg,"[r|w|x|-]{9}")) {
+			if(regex_match(optarg,"[r|w|x|-|*]{9}")) {
 				logger(LOG_DEBUG, stderr, "(Parser) Option -perm : perm matching regex (%s)\n", optarg);
 				logger(LOG_DEBUG, stderr, "(Parser) Option -perm with value `%s'\n", optarg);
 				arg = malloc(sizeof(argument_t));
@@ -313,7 +318,7 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 	int i = 0;
 
 	//Need vérification que la polonaise inverse soit correcte
-
+	logger(LOG_DEBUG, stderr, "(Parser) Args after parsing\n");
 	//Affichage du tableau d'arguments
 	list_arg_t* next = arg_list;
 	while(next != NULL) {

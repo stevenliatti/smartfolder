@@ -14,7 +14,7 @@
 #include "parser.h"
 
 /**
- * @brief      Le temps écoulé entre 2 scans.
+ * @brief      Le temps écoulé entre 2 scans. (secondes)
  */
 #define CRAWL_TIME 15
 

@@ -1,6 +1,6 @@
 CC = gcc
 FLAGS = -g -Wall -Wextra -std=gnu99 -D_BSD_SOURCE
-TESTS = test_hash_table test_logger test_crawler test_filter test_linker
+TESTS = test_hash_table test_logger test_crawler test_filter test_linker test_parser
 EXEC = searchfolder $(TESTS)
 
 # Fabrique tous les executables (tests inclus)
@@ -62,6 +62,9 @@ test_filter: test_filter.o filter.o list_bool.o hash_table.o hash_functions.o li
 test_linker: test_linker.o linker.o logger.o wrapper.o
 	$(CC) $(FLAGS) $^ -o $@
 
+test_parser: test_parser.o list_arg.o parser.o linker.o logger.o wrapper.o
+	$(CC) $(FLAGS) $^ -o $@
+
 test_hash_table.o: test_hash_table.c
 	$(CC) $(FLAGS) $< -c
 
@@ -75,6 +78,9 @@ test_filter.o: test_filter.c
 	$(CC) $(FLAGS) $< -c
 
 test_linker.o: test_linker.c
+	$(CC) $(FLAGS) $< -c
+
+test_parser.o: test_parser.c
 	$(CC) $(FLAGS) $< -c
 
 # Ménage

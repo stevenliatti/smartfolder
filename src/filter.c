@@ -275,8 +275,12 @@ bool eval_perm(char* path, argument_t* argument, struct stat* buf) {
 
 	//On compare chaque permission du fichier avec les permission données en paramètres.
 	for (int i=0;i<9;i++) {
+		if(argument->string[i] == '*') {
+			continue; //On ignore cet argument (*)
+		}
+
 		if(argument->string[i] != perm_char[i]) {
-			perm = false;
+			perm = false; //La permission n'est pas correcte.
 			break; //Plus besoin de controler les permissions suivantes
 		}			
 	}	
