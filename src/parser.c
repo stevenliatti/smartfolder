@@ -289,7 +289,7 @@ argument_t* parse_arg(int argc, char** argv, int* args_size) {
 
 			case 'i': //--perm
 
-			if(regex_match(optarg,"[r|w|x|-|*]{9}")) {
+			if(regex_match(optarg,"[r|w|x|n|*]{9}")) {
 				logger(LOG_DEBUG, stderr, "(Parser) Option -perm : perm matching regex (%s)\n", optarg);
 				logger(LOG_DEBUG, stderr, "(Parser) Option -perm with value `%s'\n", optarg);
 				arg = malloc(sizeof(argument_t));
