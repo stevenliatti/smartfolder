@@ -21,11 +21,6 @@
 int _symlink(const char* oldpath, const char* newpath) {
 	int s = symlink(oldpath, newpath);
 
-	if (s == -1) {
-		logger(LOG_ERROR, stderr, "symlink failed\n");
-		exit(EXIT_FAILURE);
-	}
-
 	return s;
 }
 
@@ -76,4 +71,40 @@ int _kill(pid_t pid, int sig) {
 	}
 
 	return k;
+}
+
+/**
+ * @brief      Wrapper de la fonction rmdir. Supprime un dossier vide.
+ *
+ * @param[in]  path  Le chemin du fichier.
+ *
+ * @return     0 si succès, -1 si erreur.
+ */
+int _rmdir(const char* path) {
+	int r = rmdir(path);
+
+	if (r == -1) {
+		logger(LOG_ERROR, stderr, "rmdir failed\n");
+		exit(EXIT_FAILURE);
+	}
+
+	return r;
+}
+
+/**
+ * @brief      Wrapper de la fonction unlink. Supprime un fichier.
+ *
+ * @param[in]  path  Le chemin du fichier.
+ *
+ * @return     0 si succès, -1 si erreur.
+ */
+int _unlink(const char* path) {
+	int u = unlink(path);
+
+	if (u == -1) {
+		logger(LOG_ERROR, stderr, "unlink failed\n");
+		exit(EXIT_FAILURE);
+	}
+
+	return u;
 }

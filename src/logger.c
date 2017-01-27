@@ -12,7 +12,7 @@
 /**
  * @brief      Le niveau actuel de log.
  */
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_WARNING
 
 /**
  * @brief      Fonction qui écris sur le stream renseigné et selon un niveau de

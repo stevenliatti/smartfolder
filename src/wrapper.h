@@ -35,5 +35,7 @@ int _symlink(const char* oldpath, const char* newpath);
 pid_t _fork();
 int _access(const char* name, int mode);
 int _kill(pid_t pid, int sig);
+int _rmdir(const char* path);
+int _unlink(const char* path);
 
 #endif
