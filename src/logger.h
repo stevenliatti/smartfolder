@@ -12,9 +12,17 @@
 
 #include "wrapper.h"
 
+/**
+ * @brief      Les différents niveaux de log prédéfinis
+ */
 #define LOG_ERROR 0
 #define LOG_WARNING 1
 #define LOG_DEBUG 2
+
+/**
+ * @brief      Le niveau actuel de log.
+ */
+#define LOG_LEVEL LOG_WARNING
 
 void logger(int log_level, FILE *stream, char *format, ...);
 

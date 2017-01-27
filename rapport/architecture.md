@@ -5,7 +5,7 @@ Nous avons décidé de diviser notre programme selon les modules suivants :
 
 ## Lecture des paramètres
 ### Parser
-Le parser se chargera de lire les arguments donnés à notre programme. Pour ce faire il utilisera la fonction : `getopt_long`.
+Le parser se chargera de lire les arguments donnés à notre programme. Pour ce faire il utilisera la fonction : `getopt_long_only`.
 
 Il devra permettre d’analyser les options suivantes :
 
@@ -15,7 +15,7 @@ ou `-name_contain partOfName`
 
 b) Taille de fichier plus grande, plus petite, ou égale à une valeur donnée.
 `-size [+/-/RIEN]taille[unité]`
-ou `unité = b(bytes),k (kilobytes),m(megabytes),g(gigabytes)`
+ou `unité = b(bytes), k(kilobytes), m(megabytes), g(gigabytes)`
 
 c) Date de création/modification/utilisation du fichier plus ancienne, plus récente, ou égale à une valeur donnée.
 `-date [+/-/RIEN]YYYY-MM-JJ[c/m/u]`

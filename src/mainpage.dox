@@ -1,6 +1,24 @@
 /**
 @mainpage Rapport d'implémentation
 
+@section man Manuel d'utilisation
+Pour lancer un searchfolder, il faut au préalable appeler <code>make</code> dans le dossier <i>src</i>, puis lancer une commande de ce genre :
+
+<code>searchfolder <dest_folder> <search_path> [expression]</code>
+
+Pour supprimer : 
+
+<code>searchfolder -d <dest_folder></code>
+
+@section searchfolder Searchfolder
+@link searchfolder.c @endlink est le fichier principal du programme. Il fonctionne en "deux modes" : mode "normal", lance un searchfolder 
+avec les arguments fournis. Il vérifie qu'un searchfolder existant porte le même nom demandé, dans quel cas il ne s'exécute pas. Une fois 
+que les arguments sont vérifiés par le Parser, on fait un <code>fork</code>, dans le parent, on crée un fichier nommé 
+<i><dest_folder>.searchfolder</i> situé dans <i>/tmp</i> qui contient le PID de l'enfant et le chemin du dossier. Après ceci, on boucle
+sur le Crawler qui est appelé toutes les 15 secondes par défaut (temps modifiable grâce à @link CRAWL_TIME @endlink).
+Le mode "suppression" vérifie d'abord qu'un searchfolder ayant le nom mentionné existe, puis <code>kill</code> le processus, 
+supprime le dossier avec les liens et le fichier dans <i>/tmp</i>. 
+
 @section argumenth Lecture des arguments
 @subsection argumenth_arg Arguments
 Pour définir de manière logique les arguments fournis en ligne de commande, nous avons implémenté 3 énumérations
@@ -28,9 +46,12 @@ Le parser se charge de lire les arguments qui sont donnés en entrée. Pour ce f
 de la librairie C getopt.h
 Les arguments sont vérifiés. Si un argument ne peut pas être exploité
 correctement il est ignoré. Ceux qui sont vérifiés et donc valides sont ajoutés
-dans la structure de donnée
+dans la structure de données
 @link argument_t
-@endlink Le parser permet de lire et de traiter les options suivantes :
+@endlink. Le Parser retourne une liste d'arguments (un tableau plus précisément)
+qui va être passé au Crawler, puis au Filter.
+
+Le parser permet de lire et de traiter les options suivantes :
 
 @subsubsection parser_name -name
 Cette option permet de spécifier un nom exact pour les fichiers à rechercher.
@@ -74,7 +95,7 @@ Cette option permet de spécifier les droits du fichier à rechercher.
 La syntaxe est <code>-perm permission</code>, ou <i>permission</i> sont les droits sous le format <i>rwxrwxrwx</i>.
 Chaque droit peut être remplacé par un <i>n</i> s’il n’est pas présent. Le droit peut aussi être remplacé par un astérisque (*)
 s’il ne doit pas être pris en compte. L’ordre des droits est le suivant :
-<code>[USER_READ/ USER_WRITE/USER_EXEC][GROUP:R/W/X][OTHER:R/W/X]</code>.
+<code>[USER_READ/USER_WRITE/USER_EXEC][GROUP:R/W/X][OTHER:R/W/X]</code>.
 
 Exemple : <code>-perm rwxrnn***</code>
 
@@ -95,13 +116,13 @@ Pour plus de détails, voir
 @endlink.
 
 @section search_engine Moteur de recherche
-Une fois que les arguments ont étés correctement traités par le Parser, le Crawler est appelé. 
+Une fois que les arguments ont étés correctement traités par le Parser, le Crawler est appelé.
 
 @subsection search_engine_crawler Crawler
-Le crawler se résume à une fonction récursive. Il parcoure le dossier, (ses sous-dossiers et les fichiers) donné en argument. 
-Il utilise deux tables de hash. Il évite les boucles infinies grâce à la première table de hash (<code>paths_traveled</code>) qui retient les 
-sous-dossiers parcourus. La deuxième (<code>files_to_link</code>) sert à stocker les fichiers approuvés par le filtre et linkés par le Linker. 
-Si un fichier est déjà contenu dans la table de hash des fichiers, le Filter n'est pas appelé. Ainsi on ne recrée pas de liens. 
+Le crawler se résume à une fonction récursive. Il parcoure le dossier, (ses sous-dossiers et les fichiers) donné en argument.
+Il utilise deux tables de hash. Il évite les boucles infinies grâce à la première table de hash (<code>paths_traveled</code>) qui retient les
+sous-dossiers parcourus. La deuxième (<code>files_to_link</code>) sert à stocker les fichiers approuvés par le filtre et linkés par le Linker.
+Si un fichier est déjà contenu dans la table de hash des fichiers, le Filter n'est pas appelé. Ainsi on ne recrée pas de liens.
 Si l'entrée courante est un dossier, il se rappelle lui-même avec ce dossier comme nouveau path.
 
 Pour plus de détails, voir le fichier
@@ -109,35 +130,101 @@ Pour plus de détails, voir le fichier
 @endlink.
 
 @subsection search_engine_filter Filter
-Le Filter (comme le Parser) se résume finalement à un "gros" switch case. Pour chaque fichier parcouru, la fonction @link filter @endlink 
-va appeler la fonction @link eval @endlink qui va comparer les stat du fichier reçu avec les arguments fournis par le parser. Pour chaque 
-argument, elle va appeler la bonne sous-fonction <code>eval_*</code> qui indique si le fichier est à garder ou non (retourne <i>true</i> 
-ou <i>false</i>) sauf si c'est un opérateur "and", "or" ou "not". Le résultat des sous-fonctions <code>eval_*</code> est stocké dans une 
-pile de booleans. Si arrive un opérateur, soit on dépile les deux derniers boolean et on applique l'opération logique ("and" ou "or") soit 
-on inverse le boolean ("not"). Si à la fin de l'évaluation de tous les arguments la pile n'est pas vide, il y'a eu une erreur et on quitte
-le programme. Si la fonction <code>eval</code> retourne vrai, alors le filtre insère le path du fichier dans la table de hash et appelle le 
-Linker pour créer le lien symbolique.
+Le Filter (comme le Parser) se résume finalement à un "gros" switch case. Pour chaque fichier parcouru, la fonction
+@link filter
+@endlink va appeler la fonction
+@link eval
+@endlink qui va comparer les stat du fichier reçu avec les arguments fournis par
+le parser. Pour chaque argument, elle va appeler la bonne sous-fonction
+<code>eval_*</code> qui indique si le fichier est à garder ou non (retourne
+<i>true</i> ou <i>false</i>) sauf si c'est un opérateur "and", "or" ou "not". Le
+résultat des sous-fonctions <code>eval_*</code> est stocké dans une pile de
+booleans. Si arrive un opérateur, soit on dépile les deux derniers boolean et on
+applique l'opération logique ("and" ou "or") soit on inverse le boolean ("not").
+Si à la fin de l'évaluation de tous les arguments la pile n'est pas vide, il y'a
+eu une erreur et on quitte le programme. Si la fonction <code>eval</code>
+retourne vrai, alors le filtre insère le path du fichier dans la table de hash
+et appelle le Linker pour créer le lien symbolique.
 
 Pour plus de détails, voir le fichier
 @link filter.c
 @endlink.
 
 @subsection search_engine_linker Linker
-Le Linker crée un lien symbolique vers le fichier reçu en paramètres. Le nom du lien est égal au nom du fichier lié. Si un lien ayant le 
-même nom mais pointant vers un autre fichier existe déjà (on peut très bien avoir deux fichiers aux même noms mais dans des sous-dossiers 
-de l'arborescence différents), un nombre aléatoire compris entre 0 et 9999 lui est concaténé (exemple : meme_nom.txt1337). Il va tenter un 
-nouveau nom tant qu'il n'est pas unique. 
+Le Linker crée un lien symbolique vers le fichier reçu en paramètres. Le nom du lien est égal au nom du fichier lié. Si un lien ayant le
+même nom mais pointant vers un autre fichier existe déjà (on peut très bien avoir deux fichiers aux même noms mais dans des sous-dossiers
+de l'arborescence différents), un nombre aléatoire compris entre 0 et 9999 lui est concaténé (exemple : meme_nom.txt1337). Il va tenter un
+nouveau nom tant qu'il n'est pas unique.
 
 Pour plus de détails, voir le fichier
 @link linker.c
 @endlink.
 
 @section librairies Structures de données et librairies
-@subsection librairies_hash_table Table de hash
+Pour les besoins internes du Parser, Filter et Crawler, les structures de données suivantes sont requises. On les avait déjà codées en
+première année en cours de programmation séquentielle en C, il a juste fallu adapter au contexte.
+
+@subsection librairies_hash_table Tables de hash
+@subsubsection hash_functions Fonctions de hash
+Implémentation du simple et double hash avec génération de nombres premiers.
+
+Pour plus de détails, voir le fichier
+@link hash_functions.c
+@endlink.
+
 @subsection librairies_hash_functions Fonctions pour le hash
+@subsubsection hash_tables Gestion des tables
+Diverses fonctions gérant l'insertion (avec ou sans hash précalculé), la suppression (non utilisée) et le test de contenance d'un élément.
+
+Pour plus de détails, voir le fichier
+@link hash_table.c
+@endlink et
+@link hash_table.h
+@endlink.
+
 @subsection librairies_list Liste/Pile de booleans ou d'arguments
+Les deux types de listes sont identiques au détail de leur contenu : une des booleans, une autre les arguments. On a jugé que faire une
+implémentation générique aurait été plus lourd et fastidieux qu'uniquement reprendre les fonctions en changeant le contenu.
+@subsubsection list_bool Liste/Pile de booleans
+Fonctions d'insertion en tête (pile) et queue (liste), comptage d'éléments, suppression et libération de mémoire.
+
+Pour plus de détails, voir le fichier
+@link list_bool.c
+@endlink et
+@link list_bool.h
+@endlink.
+@subsubsection list_arg Liste/Pile d'arguments
+Fonctions d'insertion en tête (pile) et queue (liste), comptage d'éléments, suppression et libération de mémoire.
+
+Pour plus de détails, voir le fichier
+@link list_arg.c
+@endlink et
+@link list_arg.h
+@endlink.
 
 @section system_layer Logger et appels système
+Cette partie est plus courte, mais néanmoins importante : la gestion des messages (de debug en particulier) et le wrapp des appels système.
+
 @subsection system_layer_logger Logger
+Le Logger comprend une fonction de log qui permet d'afficher des messages sur la sortie désirée selon un niveau de log défini dans
+@link logger.h
+@endlink. On peut lui passer un nombre variable d'arguments (appel interne à vfprintf).
+
+@link logger.c
+@endlink et
+@link logger.h
+@endlink.
+
 @subsection system_layer_wrapper Wrapper
+Diverses fonctions qui enveloppent les fonctions système UNIX pour, entre autres, la création de liens et le fork. Si on devait changer
+de système, il suffirait de redéfinir ces fonctions pour ne rien changer au reste du code.
+
+@link wrapper.c
+@endlink et
+@link wrapper.h
+@endlink.
+
+@section tests Tests
+Différents tests ont été écrits au cours du développement pour tester des modules séparément. Voir les fichiers <code>test_*.c</code>. 
+Il y a la règle <code>make all_test</code> pour les construire.
 */

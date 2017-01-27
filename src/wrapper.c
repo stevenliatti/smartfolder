@@ -19,9 +19,7 @@
  * @return     0 si réussite, -1 si échec.
  */
 int _symlink(const char* oldpath, const char* newpath) {
-	int s = symlink(oldpath, newpath);
-
-	return s;
+	return symlink(oldpath, newpath);
 }
 
 /**

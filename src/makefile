@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -g -Wall -Wextra -std=gnu99 -D_BSD_SOURCE
 TESTS = test_hash_table test_logger test_crawler test_filter test_linker test_parser test_remove_searchfolder
-EXEC = searchfolder $(TESTS)
+EXEC = searchfolder
 
 # Fabrique tous les executables (tests inclus)
 all: $(EXEC)
@@ -91,6 +91,6 @@ test_remove_searchfolder.o: test_remove_searchfolder.c
 
 # Ménage
 clean:
-	rm -rf *.o $(EXEC)
+	rm -rf *.o $(EXEC) $(TESTS)
 
 rebuild: clean all
