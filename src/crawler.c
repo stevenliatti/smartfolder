@@ -74,7 +74,6 @@ void crawler(char* path, char* folder_path, hash_table_t* paths_traveled,
 				logger(LOG_DEBUG, stderr, "NOT is_dir : %s\n", resolved_path);
 				if (!contains(resolved_path, files_to_link, &hash)) {
 					logger(LOG_DEBUG, stderr, "hash : %d\n", hash);
-					//files_to_link = insert_with_hash(resolved_path, files_to_link, &inserted, &hash);
 					// call the FILTER
 					files_to_link = filter(resolved_path, folder_path, arguments, args_size, files_to_link, &hash);
 				}

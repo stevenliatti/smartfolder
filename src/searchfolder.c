@@ -107,6 +107,7 @@ int main(int argc, char** argv) {
 				}
 				new_argv[argc] = NULL;
 
+				// On vérifie les arguments et on remplit le tableau des arguments si correct
 				int args_size = 0;
 				argument_t* arguments = parse_arg(argc, new_argv, &args_size);
 				if (args_size == 0) {
@@ -154,6 +155,7 @@ int main(int argc, char** argv) {
 	else {
 		logger(LOG_WARNING, stderr, "For launch a searchfolder :\nsearchfolder <dir_name> <search_path> [expression]\n");
 		logger(LOG_WARNING, stderr, "For delete a searchfolder :\nsearchfolder -d <dir_name>\n");
+		logger(LOG_WARNING, stderr, "Example :\nsearchfolder big_videos user/videos -name_contain .mkv -name_contain .mp4 -or -size +10g -and");
 		return EXIT_FAILURE;
 	}
 }

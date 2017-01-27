@@ -13,7 +13,7 @@
 /**
  * @brief      Fonction retournant une nouvelle liste vide.
  *
- * @return     la nouvelle liste.
+ * @return     pointeur sur la nouvelle liste.
  */
 list_bool_t* new_list() {
 	return NULL;
@@ -31,7 +31,7 @@ bool is_empty(const list_bool_t* list) {
 }
 
 /**
- * @brief      Fonction insérant en tête d'une liste <list> les données <value>.
+ * @brief      Fonction insérant en tête d'une liste <list> la donnée <value>.
  *
  * @param      list   une list_bool_t*.
  * @param      value  en boolean.
@@ -46,8 +46,7 @@ list_bool_t* insert_head(list_bool_t* list, bool value) {
 }
 
 /**
- * @brief      Fonction insérant en queue d'une liste <list> les données
- *             <value>.
+ * @brief      Fonction insérant en queue d'une liste <list> la donnée <value>.
  *
  * @param      list   une list_bool_t*.
  * @param      value  en boolean.
@@ -140,7 +139,6 @@ unsigned int count(list_bool_t* list) {
  * @brief      Fonction supprimant une liste chainée <list> entière.
  *
  * @param      list  une list_bool_t*.
- * @return     la liste mise à jour.
  */
 void free_all_list(list_bool_t* list) {
 	list_bool_t* temp = list;

@@ -1,6 +1,7 @@
 /**
  * @file list_bool.h
- * @brief      Header des fonctions permettant la gestion d'une liste/pile de boolean.
+ * @brief      Header des fonctions permettant la gestion d'une liste/pile de
+ *             boolean.
  * @author     Steven Liatti et Matthieu Constant
  * @bug        Pas de bugs connus
  * @date       Janvier 2017
@@ -16,7 +17,7 @@
 
 /**
  * @struct list_bool_t list_bool.h
- * @brief      Structure définissant une liste/pile.
+ * @brief      Structure définissant une liste/pile de boolean.
  */
 typedef struct list_bool_st {
 	bool value; /*!< La valeur */

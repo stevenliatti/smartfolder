@@ -58,7 +58,7 @@ bool eval_size(char* path, argument_t* argument, struct stat* buf) {
 	logger(LOG_DEBUG, stderr, "path, in eval_size : %s\n", path);
 	logger(LOG_DEBUG, stderr, "argument string, type, oper, flag : %s, %d, %d, %d\n", argument->string, argument->type, argument->oper, argument->flag);
 	
-	if(stat(path, buf) < 0)
+	if (stat(path, buf) < 0)
 		return false;
 
 	long size_criterion = atol(argument->string);
@@ -274,12 +274,12 @@ bool eval_perm(char* path, argument_t* argument, struct stat* buf) {
 	perm_char[8] = ((buf->st_mode & S_IXOTH) ? 'x' : 'n');
 
 	//On compare chaque permission du fichier avec les permission données en paramètres.
-	for (int i=0;i<9;i++) {
-		if(argument->string[i] == '*') {
+	for (int i = 0; i < 9; i++) {
+		if (argument->string[i] == '*') {
 			continue; //On ignore cet argument (*)
 		}
 
-		if(argument->string[i] != perm_char[i]) {
+		if (argument->string[i] != perm_char[i]) {
 			perm = false; //La permission n'est pas correcte.
 			break; //Plus besoin de controler les permissions suivantes
 		}			

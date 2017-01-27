@@ -1,0 +1,143 @@
+/**
+@mainpage Rapport d'implémentation
+
+@section argumenth Lecture des arguments
+@subsection argumenth_arg Arguments
+Pour définir de manière logique les arguments fournis en ligne de commande, nous avons implémenté 3 énumérations
+(pour le type, les opérateurs mathématiques et des indicateurs associés) ainsi qu'une structure décrivant un argument
+comprenant la valeur brute du critère (par exemple, pour une recherche par nom, le nom du fichier) et les 3 énumérations
+précédentes.
+
+Le type contient le type de paramètre (and, or, not, name, size, date, etc..).
+L’opération contient le modificateur pour l’opération (Valeur exacte, +, -,
+not). Le flag contient des informations supplémentaires en fonction du type. La
+spécification de la date (création, modification, utilisation) se trouve ici par
+exemple. Le string contient la valeur de l’argument. Celle-ci est directement
+utilisable par le filtre en fonction des autres données (type, opération et
+flag).
+
+Cette structure est créée et remplie dans le parser et donnée au filtre qui
+l’exploitera.
+
+Pour plus de détails, voir le fichier
+@link argument.h
+@endlink.
+
+@subsection argumenth_parser Parser
+Le parser se charge de lire les arguments qui sont donnés en entrée. Pour ce faire, il utilise la fonction getopt_long_only
+de la librairie C getopt.h
+Les arguments sont vérifiés. Si un argument ne peut pas être exploité
+correctement il est ignoré. Ceux qui sont vérifiés et donc valides sont ajoutés
+dans la structure de donnée
+@link argument_t
+@endlink Le parser permet de lire et de traiter les options suivantes :
+
+@subsubsection parser_name -name
+Cette option permet de spécifier un nom exact pour les fichiers à rechercher.
+La syntaxe est <code>-name exactName</code>, où <i>exactName</i> est le nom exact du fichier.
+Exemple : <code>-name source.c</code>
+
+@subsubsection parser_name_contain -name_contain
+Cette option permet de spécifier une sous-chaine qui se trouve dans le nom des fichiers à rechercher.
+La syntaxe est <code>-name_contain partOfName</code>, où <i>partOfName</i> est une sous-chaine de caractères qui se trouve
+dans le fichier à rechercher.
+
+Exemple : <code>-name_contain source</code>
+
+@subsubsection parser_size -size
+Cette option permet de spécifier la taille des fichiers à rechercher.
+La syntaxe est <code>-size [+/-/RIEN]taille[unite]</code> où <i>taille</i> est la taille du fichier de l’ordre de l’unité.
+L’unité peut être b(byte), k(kilobyte), m(megabyte) ou g(gigabyte). Si aucune unité n’est spécifiée, l’unité par défaut
+sera le byte. Le flag <i>[+/-/RIEN]</i> permet de spécifier si la taille du fichier doit être inférieure(-), supérieure(+)
+ou égale(RIEN) à la taille donnée.
+
+Exemple : <code>-size -2g</code>
+
+@subsubsection parser_date -date
+Cette option permet de spécifier la date du fichier. Celle-ci peut être la date d’accès, de création ou de modification.
+La syntaxe est <code>-date [+/-/RIEN]date[c/m/u]</code>, où <i>date</i> est la date du ficher sous le format YYYY-MM-JJ.
+Le flag <i>[+/-/RIEN]</i> permet de spécifier si la date du fichier doit être inférieure(-), supérieure(+) ou égale(RIEN)
+à la date donnée. Le flag <i>c/m/u</i> permet de spécifier s’il s’agit de la date d’accès(u), de modification(m) ou de création(c).
+Si aucun de ces trois flags n’est spécifié, le flag de la date d’accès(u) sera sélectionné par défaut.
+
+Exemple : <code>-date -2016-05-12c</code>
+
+@subsubsection parser_owner -owner
+Cette option permet de spécifier le propriétaire du fichier. Celui-ci peut être un utilisateur ou un groupe.
+La syntaxe est <code>-owner [RIEN/!]number[u/g]</code>, ou <i>number</i> est l’id du propriétaire. Le flag <i>!</i>
+permet de choisir sa négation. Le flag <i>u/g</i> permet de spécifier s’il s’agit d’un utilisateur(u) ou d’un groupe(g).
+
+Exemple : <code>-owner 14299u</code>
+
+@subsubsection parser_perm -perm
+Cette option permet de spécifier les droits du fichier à rechercher.
+La syntaxe est <code>-perm permission</code>, ou <i>permission</i> sont les droits sous le format <i>rwxrwxrwx</i>.
+Chaque droit peut être remplacé par un <i>n</i> s’il n’est pas présent. Le droit peut aussi être remplacé par un astérisque (*)
+s’il ne doit pas être pris en compte. L’ordre des droits est le suivant :
+<code>[USER_READ/ USER_WRITE/USER_EXEC][GROUP:R/W/X][OTHER:R/W/X]</code>.
+
+Exemple : <code>-perm rwxrnn***</code>
+
+@subsubsection parser_logic_op Opérateurs
+Tous les arguments peuvent être utilisés avec leur négation en utilisant l’argument <code>-not</code>.
+Les arguments peuvent également être combinés avec les options "et" (<code>-and</code>) et/ou "ou" (<code>-or</code>).
+<b>IMPORTANT : La notation polonaise inverse doit être utilisée.</b>
+
+@subsubsection parser_examples Exemples d'utilisation
+<code>-name_contain .mkv -name_contain .mp4 -or -size +10g -and</code> va chercher tous les fichiers .mkv ou .mp4 de plus de 10 Go.
+
+<code>-date -2017-01-20 -not -owner 42u -and</code> va chercher tous les
+fichiers plus récents que le 20 janvier 2017 et dont le propriétaire
+l'identifiant 42.
+
+Pour plus de détails, voir
+@link parser.h
+@endlink.
+
+@section search_engine Moteur de recherche
+Une fois que les arguments ont étés correctement traités par le Parser, le Crawler est appelé. 
+
+@subsection search_engine_crawler Crawler
+Le crawler se résume à une fonction récursive. Il parcoure le dossier, (ses sous-dossiers et les fichiers) donné en argument. 
+Il utilise deux tables de hash. Il évite les boucles infinies grâce à la première table de hash (<code>paths_traveled</code>) qui retient les 
+sous-dossiers parcourus. La deuxième (<code>files_to_link</code>) sert à stocker les fichiers approuvés par le filtre et linkés par le Linker. 
+Si un fichier est déjà contenu dans la table de hash des fichiers, le Filter n'est pas appelé. Ainsi on ne recrée pas de liens. 
+Si l'entrée courante est un dossier, il se rappelle lui-même avec ce dossier comme nouveau path.
+
+Pour plus de détails, voir le fichier
+@link crawler.c
+@endlink.
+
+@subsection search_engine_filter Filter
+Le Filter (comme le Parser) se résume finalement à un "gros" switch case. Pour chaque fichier parcouru, la fonction @link filter @endlink 
+va appeler la fonction @link eval @endlink qui va comparer les stat du fichier reçu avec les arguments fournis par le parser. Pour chaque 
+argument, elle va appeler la bonne sous-fonction <code>eval_*</code> qui indique si le fichier est à garder ou non (retourne <i>true</i> 
+ou <i>false</i>) sauf si c'est un opérateur "and", "or" ou "not". Le résultat des sous-fonctions <code>eval_*</code> est stocké dans une 
+pile de booleans. Si arrive un opérateur, soit on dépile les deux derniers boolean et on applique l'opération logique ("and" ou "or") soit 
+on inverse le boolean ("not"). Si à la fin de l'évaluation de tous les arguments la pile n'est pas vide, il y'a eu une erreur et on quitte
+le programme. Si la fonction <code>eval</code> retourne vrai, alors le filtre insère le path du fichier dans la table de hash et appelle le 
+Linker pour créer le lien symbolique.
+
+Pour plus de détails, voir le fichier
+@link filter.c
+@endlink.
+
+@subsection search_engine_linker Linker
+Le Linker crée un lien symbolique vers le fichier reçu en paramètres. Le nom du lien est égal au nom du fichier lié. Si un lien ayant le 
+même nom mais pointant vers un autre fichier existe déjà (on peut très bien avoir deux fichiers aux même noms mais dans des sous-dossiers 
+de l'arborescence différents), un nombre aléatoire compris entre 0 et 9999 lui est concaténé (exemple : meme_nom.txt1337). Il va tenter un 
+nouveau nom tant qu'il n'est pas unique. 
+
+Pour plus de détails, voir le fichier
+@link linker.c
+@endlink.
+
+@section librairies Structures de données et librairies
+@subsection librairies_hash_table Table de hash
+@subsection librairies_hash_functions Fonctions pour le hash
+@subsection librairies_list Liste/Pile de booleans ou d'arguments
+
+@section system_layer Logger et appels système
+@subsection system_layer_logger Logger
+@subsection system_layer_wrapper Wrapper
+*/
